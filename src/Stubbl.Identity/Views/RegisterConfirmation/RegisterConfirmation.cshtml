@@ -1,0 +1,27 @@
+﻿@using Stubbl.Identity.Models.RegisterConfirmation
+
+@model RegisterConfirmationViewModel
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="page-header">
+            <h1 class="mb-5 display-4">
+                Please confirm your email address
+            </h1>
+        </div>
+
+        <div class="alert alert-success">
+            Please confirm your email address by clicking the link in the verification email sent to @Model.EmailAddress.
+        </div>
+
+        <form asp-route="ResendEmailAddressConfirmation" asp-route-userId="@Model.UserId" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <input type="hidden" asp-for="UserId" />
+
+            <div class="form-group">
+                <p>
+                    <button type="submit" class="btn btn-link p-0">Not received the email?</button>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>

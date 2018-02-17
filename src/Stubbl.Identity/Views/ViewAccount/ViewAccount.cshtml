@@ -1,0 +1,40 @@
+﻿@using IdentityModel
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="page-header">
+            <h2 class="mb-5 display-4">
+                Your Info
+            </h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <img class="rounded-circle" asp-gravatar-emailaddress="@User.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value" asp-gravatar-size="200" />
+            </div>
+            <div class="col-md-6">
+                <h3 class="mb-0">
+                    @User.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Name)?.Value
+                </h3>
+                <a asp-route="EditName"><small>Edit name</small></a>
+
+                <h5 class="mt-4 mb-0">
+                    @User.Claims.SingleOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value
+                </h5>
+                <a asp-route="EditEmailAddress"><small>Edit email address</small></a>
+
+                <dl class="mt-4">
+                    @foreach (var claim in User.Claims)
+                    {
+                        <dt>
+                            @claim.Type
+                        </dt>
+                        <dd>
+                            @claim.Value
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

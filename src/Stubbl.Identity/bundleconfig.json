@@ -1,0 +1,22 @@
+﻿[
+  {
+    "inputFiles": [
+      "wwwroot/css/bootstrap-social.css",
+      "wwwroot/css/form-signin.css",
+      "wwwroot/css/site.css",
+      "wwwroot/css/validation.css"
+    ],
+    "outputFileName": "wwwroot/css/bundle.min.css"
+  },
+  {
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "outputFileName": "wwwroot/js/bundle.min.js",
+    "sourceMap": false
+  }
+]
