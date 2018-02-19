@@ -11,7 +11,7 @@
         </div>
 
         <div class="alert alert-success">
-            Please confirm your email address by clicking the link in the verification email sent to @Model.EmailAddress.
+            Please confirm your email address by clicking the link in the verification email sent to <strong>@Model.EmailAddress</strong>.
         </div>
 
         <form asp-route="ResendEmailAddressConfirmation" asp-route-userId="@Model.UserId" asp-route-returnUrl="@Model.ReturnUrl" method="post">

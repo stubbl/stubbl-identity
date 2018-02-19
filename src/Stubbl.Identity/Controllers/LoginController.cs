@@ -120,10 +120,16 @@ namespace Stubbl.Identity.Controllers
                     return RedirectToRoute("LockedOut");
                 }
 
+                if (signInResult.IsNotAllowed)
+                {
+                    // TODO NotAllowed
+                    return RedirectToRoute("NotAllowed");
+                }
+
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, model.RememberMe });
+                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = model.RememberMe });
                 }
 
                 ModelState.AddModelError("", "The email address and/or password is incorrect");
