@@ -9,9 +9,9 @@
     public class ForgotPasswordController : Controller
     {
         private readonly IEmailSender _emailSender;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public ForgotPasswordController(IEmailSender emailSender, UserManager<ApplicationUser> userManager)
+        public ForgotPasswordController(IEmailSender emailSender, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _userManager = userManager;

@@ -16,12 +16,12 @@ namespace Stubbl.Identity.Controllers
         private readonly IClientStore _clientStore;
         private readonly IIdentityServerInteractionService _interactionService;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<StubblUser> _signInManager;
+        private readonly UserManager<StubblUser> _userManager;
 
         public LoginController(IClientStore clientStore, IIdentityServerInteractionService interactionService,
-            IAuthenticationSchemeProvider schemeProvider, SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            IAuthenticationSchemeProvider schemeProvider, SignInManager<StubblUser> signInManager,
+            UserManager<StubblUser> userManager)
         {
             _clientStore = clientStore;
             _interactionService = interactionService;
@@ -122,8 +122,15 @@ namespace Stubbl.Identity.Controllers
 
                 if (signInResult.IsNotAllowed)
                 {
-                    // TODO NotAllowed
-                    return RedirectToRoute("NotAllowed");
+                    if (_signInManager.Options.SignIn.RequireConfirmedEmail)
+                    {
+                        var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+
+                        if (!await _userManager.IsEmailConfirmedAsync(user))
+                        {
+                            return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                        }
+                    }
                 }
 
                 if (signInResult.RequiresTwoFactor)
@@ -139,22 +146,12 @@ namespace Stubbl.Identity.Controllers
                 return View(viewModel);
             }
 
-            if (_signInManager.Options.SignIn.RequireConfirmedEmail)
-            {
-                var user = await _userManager.FindByEmailAsync(model.EmailAddress);
-
-                if (!await _userManager.IsEmailConfirmedAsync(user))
-                {
-                    return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
-                }
-            }
-
             if (!_interactionService.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
 
-            return RedirectToRoute("ViewAccount");
+            return RedirectToRoute("Home");
         }
     }
 }

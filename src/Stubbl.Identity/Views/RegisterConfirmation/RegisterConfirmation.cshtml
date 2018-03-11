@@ -10,17 +10,15 @@
             </h1>
         </div>
 
-        <div class="alert alert-success">
+        <p class="alert alert-success">
             Please confirm your email address by clicking the link in the verification email sent to <strong>@Model.EmailAddress</strong>.
-        </div>
+        </p>
 
         <form asp-route="ResendEmailAddressConfirmation" asp-route-userId="@Model.UserId" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <input type="hidden" asp-for="UserId" />
 
             <div class="form-group">
-                <p>
-                    <button type="submit" class="btn btn-link p-0">Not received the email?</button>
-                </p>
+                <button type="submit" class="btn btn-link p-0">Not received the email?</button>
             </div>
         </form>
     </div>

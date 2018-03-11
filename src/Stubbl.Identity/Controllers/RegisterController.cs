@@ -12,11 +12,11 @@
     {
         private readonly IIdentityServerInteractionService _interactionService;
         private readonly IEmailSender _emailSender;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<StubblUser> _signInManager;
+        private readonly UserManager<StubblUser> _userManager;
 
         public RegisterController(IEmailSender emailSender, IIdentityServerInteractionService interactionService,
-            SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+            SignInManager<StubblUser> signInManager, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _interactionService = interactionService;
@@ -68,7 +68,7 @@
                 return View(viewModel);
             }
 
-            var user = new ApplicationUser
+            var user = new StubblUser
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -110,7 +110,7 @@
                 return Redirect(returnUrl);
             }
 
-            return RedirectToRoute("ViewAccount");
+            return RedirectToRoute("Home");
         }
     }
 }

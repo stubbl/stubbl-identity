@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stubbl Identity MvcClient</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css" integrity="sha256-jBpMJWNNWEGSSqsYSKzJ3Lw9VnIYMFPItx/yE5tl18M=" crossorigin="anonymous" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a asp-route="Home" class="navbar-brand">Stubbl Identity MVC Client</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a asp-route="Secure" class="nav-link">Secure</a>
+                </li>
+            </ul>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-route="Logout" method="post" class="form-inline">
+                    <button type="submit" class="btn btn-outline-danger">Sign Out</button>
+                </form>
+            }
+        </div>
+    </nav>
+
+    <div class="container pt-5">
+        <h1 class="text-center">
+            Hi, @(User.Identity.IsAuthenticated ? User.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value ?? "Unknown" : "Guest")
+        </h1>
+
+        <div class="mt-5">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>

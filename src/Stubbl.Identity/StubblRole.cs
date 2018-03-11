@@ -2,7 +2,7 @@
 {
     using CodeContrib.AspNetCore.Identity.MongoDB;
 
-    public class ApplicationRole : IdentityRole
+    public class StubblRole : IdentityRole
     {
     }
 }

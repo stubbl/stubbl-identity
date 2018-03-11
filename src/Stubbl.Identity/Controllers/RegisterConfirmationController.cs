@@ -9,9 +9,9 @@
     public class RegisterConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public RegisterConfirmationController(IEmailSender emailSender, UserManager<ApplicationUser> userManager)
+        public RegisterConfirmationController(IEmailSender emailSender, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _userManager = userManager;
@@ -24,7 +24,7 @@
 
             if (user == null)
             {
-                return RedirectToRoute("ViewAccount");
+                return RedirectToRoute("Home");
             }
 
             var viewModel = new RegisterConfirmationViewModel

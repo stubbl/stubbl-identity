@@ -8,9 +8,9 @@
     public class ForgotPasswordConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public ForgotPasswordConfirmationController(IEmailSender emailSender, UserManager<ApplicationUser> userManager)
+        public ForgotPasswordConfirmationController(IEmailSender emailSender, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _userManager = userManager;

@@ -8,9 +8,9 @@
     public class ResendEmailAddressConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public ResendEmailAddressConfirmationController(IEmailSender emailSender, UserManager<ApplicationUser> userManager)
+        public ResendEmailAddressConfirmationController(IEmailSender emailSender, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _userManager = userManager;
@@ -24,7 +24,7 @@
 
             if (user == null)
             {
-                return RedirectToRoute("ViewAccount");
+                return RedirectToRoute("Home");
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);

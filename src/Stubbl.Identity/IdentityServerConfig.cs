@@ -1,4 +1,5 @@
-﻿using IdentityServer4;
+﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -34,9 +35,32 @@ namespace Stubbl.Identity
                 AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
                 AllowedScopes =
                 {
+                    IdentityServerConstants.StandardScopes.Email,
+                    IdentityServerConstants.StandardScopes.OfflineAccess,
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
+                },
+                ClientId = "stubbl-identity-mvc-client",
+                ClientName = "Stubbl Identity MVC Client",
+                ClientSecrets =
+                {
+                    new Secret("secret".Sha256())
+                },
+                PostLogoutRedirectUris = { "http://localhost:57255/signout-callback-oidc" },
+                RedirectUris = { "http://localhost:57255/signin-oidc" },
+                RequireConsent = true
+            };
+
+            yield return new Client
+            {
+                AllowOfflineAccess = true,
+                AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+                AllowedScopes =
+                {
                     IdentityServerConstants.StandardScopes.Email,
+                    IdentityServerConstants.StandardScopes.OfflineAccess,
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
                     "stubbl-api"
                 },
                 ClientId = "stubbl-app",
@@ -47,7 +71,6 @@ namespace Stubbl.Identity
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Select(x => new Secret(x.Sha256()))
                     .ToList(),
-                EnableLocalLogin = false,
                 PostLogoutRedirectUris = configuration.GetSection("StubblApp:PostLogoutRedirectUris")
                     .AsEnumerable()
                     .Select(kvp => kvp.Value)

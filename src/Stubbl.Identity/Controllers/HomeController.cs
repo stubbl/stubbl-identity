@@ -4,10 +4,10 @@
     using Microsoft.AspNetCore.Mvc;
 
     [Authorize]
-    public class ViewAccountController : Controller
+    public class HomeController : Controller
     {
-        [HttpGet("/", Name = "ViewAccount")]
-        public IActionResult ViewAccount()
+        [HttpGet("/", Name = "Home")]
+        public IActionResult Home()
         {
             return View();
         }

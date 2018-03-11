@@ -10,9 +10,9 @@
 
     public class StubblProfileService : IProfileService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public StubblProfileService(UserManager<ApplicationUser> userManager)
+        public StubblProfileService(UserManager<StubblUser> userManager)
         {
             _userManager = userManager;
         }

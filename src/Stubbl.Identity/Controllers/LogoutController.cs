@@ -14,11 +14,11 @@
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IIdentityServerInteractionService _interactionService;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<StubblUser> _signInManager;
 
         public LogoutController(IHttpContextAccessor httpContextAccessor,
             IIdentityServerInteractionService interactionService,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<StubblUser> signInManager)
         {
             _httpContextAccessor = httpContextAccessor;
             _interactionService = interactionService;
@@ -63,7 +63,7 @@
             var viewModel = new LoggedOutViewModel
             {
                 AutomaticRedirectAfterSignOut = AccountConfig.AutomaticRedirectAfterSignOut,
-                ClientName = logout?.ClientId,
+                ClientName = logout?.ClientName,
                 LogoutId = logoutId,
                 PostLogoutRedirectUri = logout?.PostLogoutRedirectUri,
                 SignOutIframeUrl = logout?.SignOutIFrameUrl

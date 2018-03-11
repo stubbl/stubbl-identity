@@ -17,16 +17,14 @@
                     <section>
                         <form asp-route="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
                             <div>
-                                <p>
-                                    @foreach (var loginProvider in Model.LoginProviders)
-                                    {
-                                        <button type="submit" class="btn btn-lg btn-default btn-block btn-@loginProvider.ToLower()" name="provider" value="@loginProvider" title="Log in using your @loginProvider account">
-                                            @Html.LoginProviderIcon(loginProvider)
+                                @foreach (var loginProvider in Model.LoginProviders)
+                                {
+                                    <button type="submit" class="btn btn-lg btn-default btn-block btn-@loginProvider.ToLower()" name="provider" value="@loginProvider" title="Log in using your @loginProvider account">
+                                        @Html.LoginProviderIcon(loginProvider)
 
-                                            @loginProvider
-                                        </button>
-                                    }
-                                </p>
+                                        @loginProvider
+                                    </button>
+                                }
                             </div>
                         </form>
                     </section>
@@ -42,15 +40,13 @@
                         <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-signin">
                             <div class="form-group">
                                 <label asp-for="EmailAddress" class="sr-only">Email address</label>
-                                <input type="email" asp-for="EmailAddress" class="form-control" placeholder="Email address" autofocus />
+                                <input type="email" asp-for="EmailAddress" class="form-control" placeholder="Email address" />
                                 <label asp-for="Password" class="sr-only">Password</label>
                                 <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
                             </div>
 
                             <div class="form-group">
-                                <p>
-                                    <a asp-route="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Forgotten your password?</a>
-                                </p>
+                                <a asp-route="ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Forgotten your password?</a>
                             </div>
 
                             <div class="form-group">
@@ -65,9 +61,7 @@
                             </div>
 
                             <div class="form-group">
-                                <p>
-                                    <a asp-route="Register" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Register as a new user</a>
-                                </p>
+                                <a asp-route="Register" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Register as a new user</a>
                             </div>
                         </form>
                     </section>
@@ -76,15 +70,15 @@
 
             @if (!Model.EnableLocalLogin && !Model.LoginProviders.Any())
             {
-                <div class="alert alert-warning">
+                <p class="alert alert-warning">
                     There are no login schemes configured for this client.
-                </div>
+                </p>
             }
         </div>
     </div>
 </div>
 
 @section Scripts
-{
+    {
     @await Html.PartialAsync("_ValidationScripts")
-}   
+}

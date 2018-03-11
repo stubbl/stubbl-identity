@@ -3,21 +3,30 @@
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using CodeContrib.AspNetCore.Identity.MongoDB;
+    using IdentityModel;
+    using IdentityServer4.AspNetIdentity;
+    using IdentityServer4.Models;
+    using IdentityServer4.Stores;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using MongoDB.Bson.Serialization;
     using MongoDB.Driver;
     using Newtonsoft.Json.Linq;
     using NWebsec.AspNetCore.Middleware;
-    using Stubbl.Identity.Services;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Reflection;
     using System.Security.Claims;
+    using System.Threading.Tasks;
 
     public class Startup
     {
@@ -101,7 +110,24 @@
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentity<ApplicationUser, ApplicationRole>(o =>
+            BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIgnoreExtraElements(true);
+            });
+
+            var url = new MongoUrl(_configuration.GetValue<string>("MongoDB:ConnectionString"));
+            var client = new MongoClient(url);
+            var database = client.GetDatabase(url.DatabaseName);
+            var persistedGrantCollection = database.GetCollection<PersistedGrant>("persistedGrants");
+
+            services.AddTransient<IPersistedGrantStore>(sp => new MongoDbPersistedGrantStore(persistedGrantCollection));
+
+            // ...
+
+            services.AddScoped<IUserClaimsPrincipalFactory<StubblUser>, StubblClaimsPrincipalFactory>();
+
+            services.AddIdentity<StubblUser, StubblRole>(o =>
                 {
                     o.Password.RequireDigit = false;
                     o.Password.RequireLowercase = false;
@@ -113,20 +139,19 @@
                     o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
                 })
                 .AddErrorDescriber<StubblIdentityErrorDescriber>()
-                .AddMongoDBStores<ApplicationUser, ApplicationRole>(new MongoUrl(_configuration.GetValue<string>("MongoDB:ConnectionString")))
+                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(_configuration.GetValue<string>("MongoDB:ConnectionString")))
                 .AddDefaultTokenProviders();
 
             services.AddIdentityServer(o =>
                 {
                     o.UserInteraction.LoginUrl = "/login";
+                    o.UserInteraction.LogoutUrl = "/logout";
                 })
-                .AddAspNetIdentity<ApplicationUser>()
+                .AddAspNetIdentity<StubblUser>()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
-                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddInMemoryPersistedGrants()
-                .AddProfileService<StubblProfileService>();
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources());
 
             services.AddAuthentication()
                 // TODO AddGitHub()
@@ -208,6 +233,157 @@
             var serviceProvider = new AutofacServiceProvider(container);
 
             return serviceProvider;
+        }
+    }
+
+    public static class IdentityServerBuilderExtensions
+    {
+        public static IIdentityServerBuilder AddAspNetIdentity<TUser>(this IIdentityServerBuilder builder)
+            where TUser : class
+        {
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
+                options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
+                options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role;
+            });
+
+            builder.Services.Configure<SecurityStampValidatorOptions>(opts =>
+            {
+                opts.OnRefreshingPrincipal = SecurityStampValidatorCallback.UpdatePrincipal;
+            });
+
+            builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, cookie =>
+            {
+                // we need to disable to allow iframe for authorize requests
+                cookie.Cookie.SameSite = SameSiteMode.None;
+            });
+
+            builder.AddResourceOwnerValidator<ResourceOwnerPasswordValidator<TUser>>();
+            builder.AddProfileService<ProfileService<TUser>>();
+
+            return builder;
+        }
+    }
+
+    public class MongoDbPersitedGrantStore : IPersistedGrantStore
+    {
+        public Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<PersistedGrant> GetAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAllAsync(string subjectId, string clientId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAllAsync(string subjectId, string clientId, string type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StoreAsync(PersistedGrant grant)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MongoDbPersistedGrantStore : IPersistedGrantStore
+    {
+        private readonly IMongoCollection<PersistedGrant> _persistedGrantsCollection;
+
+        public MongoDbPersistedGrantStore(IMongoCollection<PersistedGrant> persistedGrantsCollection)
+        {
+            _persistedGrantsCollection = persistedGrantsCollection;
+        }
+
+        public async Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
+        {
+            if (subjectId == null)
+            {
+                throw new ArgumentNullException(nameof(subjectId));
+            }
+
+            return await _persistedGrantsCollection.Find(pg => pg.SubjectId == subjectId)
+                .ToListAsync();
+        }
+
+        public async Task<PersistedGrant> GetAsync(string key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            return await _persistedGrantsCollection.Find(pg => pg.Key == key)
+                .SortByDescending(pg => pg.CreationTime)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task RemoveAllAsync(string subjectId, string clientId)
+        {
+            if (subjectId == null)
+            {
+                throw new ArgumentNullException(nameof(subjectId));
+            }
+
+            if (clientId == null)
+            {
+                throw new ArgumentNullException(nameof(clientId));
+            }
+
+            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.SubjectId == subjectId && pg.ClientId == clientId);
+        }
+
+        public async Task RemoveAllAsync(string subjectId, string clientId, string type)
+        {
+            if (subjectId == null)
+            {
+                throw new ArgumentNullException(nameof(subjectId));
+            }
+
+            if (clientId == null)
+            {
+                throw new ArgumentNullException(nameof(clientId));
+            }
+
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.SubjectId == subjectId && pg.ClientId == clientId && pg.Type == type);
+        }
+
+        public async Task RemoveAsync(string key)
+        {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.Key == key);
+        }
+
+        public async Task StoreAsync(PersistedGrant grant)
+        {
+            if (grant == null)
+            {
+                throw new ArgumentNullException(nameof(grant));
+            }
+
+            await _persistedGrantsCollection.InsertOneAsync(grant);
         }
     }
 }

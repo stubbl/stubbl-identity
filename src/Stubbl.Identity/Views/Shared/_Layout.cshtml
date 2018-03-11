@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Stubbl.Identity
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject SignInManager<StubblUser> SignInManager
 
 @{
     var isLoggedOut = true.Equals(ViewData["IsLoggedOut"]);
@@ -44,7 +44,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <a asp-route="ViewAccount" class="navbar-brand">Stubbl</a>
+        <a asp-route="Home" class="navbar-brand">Stubbl</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -52,7 +52,7 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a asp-route="ViewAccount" class="nav-link">
+                    <a asp-route="Home" class="nav-link">
                         Your Info
                     </a>
                 </li>

@@ -5,9 +5,9 @@
 
     public class ExternalLoginController : Controller
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly SignInManager<StubblUser> _signInManager;
 
-        public ExternalLoginController(SignInManager<ApplicationUser> signInManager)
+        public ExternalLoginController(SignInManager<StubblUser> signInManager)
         {
             _signInManager = signInManager;
         }

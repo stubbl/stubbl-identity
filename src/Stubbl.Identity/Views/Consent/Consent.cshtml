@@ -1,0 +1,95 @@
+﻿@using Stubbl.Identity.Models.Consent
+
+@model ConsentViewModel
+
+<div class="page-consent">
+    <div class="page-header">
+        <h2 class="mb-5 display-4">
+            @Model.ClientName
+            <small class="text-muted">is requesting your permission</small>
+        </h2>
+    </div>
+
+    @if (Model.ClientLogoUrl != null)
+    {
+        <div class="client-logo"><img src="@Model.ClientLogoUrl"></div>
+    }
+
+    @Html.Partial("_ValidationSummary")
+
+    <form asp-route="Consent">
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <p class="lead">Uncheck the permissions you do not wish to grant.</p>
+
+
+        <div class="row mb-5">
+            @if (Model.IdentityScopes.Any())
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Personal Information
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var scope in Model.IdentityScopes)
+                            {
+                                @Html.Partial("_Scope", scope)
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            @if (Model.ResourceScopes.Any())
+            {
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Application Access
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @foreach (var scope in Model.ResourceScopes)
+                            {
+                                @Html.Partial("_Scope", scope)
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-6 offset-3">
+                    @if (Model.AllowRememberConsent)
+                    {
+                        <div class="form-group text-center">
+                            <label>
+                                <input asp-for="RememberConsent" />
+                                Remember my decision?
+                            </label>
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col">
+                            <button name="button" value="yes" class="btn btn-lg btn-primary btn-block" autofocus>Allow</button>
+                        </div>
+                        <div class="col">
+                            <button name="button" value="no" class="btn btn-lg btn-secondary btn-block">Deny</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.ClientUrl != null)
+            {
+                <a class="pull-right btn btn-default" target="_blank" href="@Model.ClientUrl">
+                    <i class="fa fa-exclamation-circle text-primary"></i>
+                    <strong>@Model.ClientName</strong>
+                </a>
+            }
+        </div>
+    </form>
+</div>

@@ -7,9 +7,9 @@
 
     public class ConfirmEmailAddressController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<StubblUser> _userManager;
 
-        public ConfirmEmailAddressController(UserManager<ApplicationUser> userManager)
+        public ConfirmEmailAddressController(UserManager<StubblUser> userManager)
         {
             _userManager = userManager;
         }
@@ -19,7 +19,7 @@
         {
             if (userId == null || token == null)
             {
-                return RedirectToRoute("ViewAccount");
+                return RedirectToRoute("Home");
             }
 
             var user = await _userManager.FindByIdAsync(userId);

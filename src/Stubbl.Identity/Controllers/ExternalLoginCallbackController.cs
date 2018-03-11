@@ -1,7 +1,5 @@
 ﻿namespace Stubbl.Identity.Controllers
 {
-    using CodeContrib.AspNetCore.Identity.MongoDB;
-    using IdentityModel;
     using IdentityServer4.Services;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Identity;
@@ -19,12 +17,12 @@
         private readonly IEmailSender _emailSender;
         private readonly IIdentityServerInteractionService _interactionService;
         private readonly ILogger<ExternalLoginCallbackController> _logger;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<StubblUser> _signInManager;
+        private readonly UserManager<StubblUser> _userManager;
 
         public ExternalLoginCallbackController(IEmailSender emailSender,
             IIdentityServerInteractionService interactionService, ILogger<ExternalLoginCallbackController> logger,
-            SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+            SignInManager<StubblUser> signInManager, UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _interactionService = interactionService;
@@ -111,7 +109,7 @@
                 return Redirect(returnUrl);
             }
 
-            return RedirectToRoute("ViewAccount");
+            return RedirectToRoute("Home");
         }
 
         [HttpPost("/external-login-callback", Name = "ExternalLoginCallback")]
@@ -142,7 +140,7 @@
                 return View(viewModel);
             }
 
-            var user = new ApplicationUser
+            var user = new StubblUser
             {
                 EmailAddress = model.EmailAddress,
                 EmailAddressConfirmed = true,
@@ -202,7 +200,7 @@
                 return Redirect(returnUrl);
             }
 
-            return RedirectToRoute("ViewAccount");
+            return RedirectToRoute("Home");
         }
     }
 }
