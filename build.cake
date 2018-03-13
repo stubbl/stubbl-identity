@@ -1,7 +1,6 @@
 var target = Argument("target", "Default");
 
 var configuration = Argument("configuration", EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "Release");
-var framework = "netcoreapp2.0";
 
 var artifactsDirectory = "./artifacts";
 var publishDirectory = "./publish";
@@ -67,10 +66,10 @@ Task("Restore")
     .IsDependentOn("Version")
     .Does(() =>
     {
-        foreach (var filePath in GetFiles(@".\**\*.csproj"))
-        {
-            DotNetCoreRestore(filePath.FullPath);
-        }
+        //foreach (var filePath in GetFiles(@".\**\*.csproj"))
+        //{
+        //    DotNetCoreRestore(filePath.FullPath);
+        //}
     });
 
 Task("Build")
@@ -82,7 +81,6 @@ Task("Build")
             DotNetCoreBuild(filePath.FullPath, new DotNetCoreBuildSettings
             {
                 Configuration = configuration,
-                Framework = framework,
                 //NoRestore = true
             });
         }
@@ -96,7 +94,6 @@ Task("Test")
             DotNetCoreTest(filePath.FullPath, new DotNetCoreTestSettings
             {
                 Configuration = configuration,
-                Framework = framework,
                 Logger = "trx;LogFileName=TestResult.xml",
                 NoBuild = true,
                 //NoRestore = true
@@ -125,7 +122,6 @@ Task("Pack")
         DotNetCorePublish(projectFilePath, new DotNetCorePublishSettings
         {
             Configuration = configuration,
-            Framework = framework,
             //NoDependencies = true,
             //NoRestore = true,
             OutputDirectory = publishDirectory
