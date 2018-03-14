@@ -110,13 +110,15 @@
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            var mongoDbConnectionString = _configuration.GetValue<string>("MongoDB:ConnectionString");
+
             BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
             {
                 cm.AutoMap();
                 cm.SetIgnoreExtraElements(true);
             });
 
-            var url = new MongoUrl(_configuration.GetValue<string>("MongoDB:ConnectionString"));
+            var url = new MongoUrl(mongoDbConnectionString);
             var client = new MongoClient(url);
             var database = client.GetDatabase(url.DatabaseName);
             var persistedGrantCollection = database.GetCollection<PersistedGrant>("persistedGrants");
@@ -139,7 +141,7 @@
                     o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
                 })
                 .AddErrorDescriber<StubblIdentityErrorDescriber>()
-                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(_configuration.GetValue<string>("MongoDB:ConnectionString")))
+                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(mongoDbConnectionString))
                 .AddDefaultTokenProviders();
 
             services.AddIdentityServer(o =>
