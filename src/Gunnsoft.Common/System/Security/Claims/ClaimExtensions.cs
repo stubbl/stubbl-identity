@@ -1,7 +1,7 @@
-﻿namespace System.Security.Claims
-{
-    using Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace System.Security.Claims
+{
     public static class ClaimExtensions
     {
         public static void AddIfValueNotNull(this List<Claim> extended, string type, string value)

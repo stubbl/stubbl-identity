@@ -1,6 +1,5 @@
 ﻿@using Stubbl.Identity.Models.Login
-
-@model LoginViewModel
+@model Stubbl.Identity.Models.Login.LoginViewModel
 
 <div class="row">
     <div class="col-lg-8 offset-lg-2">
@@ -40,9 +39,9 @@
                         <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-signin">
                             <div class="form-group">
                                 <label asp-for="EmailAddress" class="sr-only">Email address</label>
-                                <input type="email" asp-for="EmailAddress" class="form-control" placeholder="Email address" />
+                                <input type="email" asp-for="EmailAddress" class="form-control" placeholder="Email address"/>
                                 <label asp-for="Password" class="sr-only">Password</label>
-                                <input type="password" asp-for="Password" class="form-control" placeholder="Password" />
+                                <input type="password" asp-for="Password" class="form-control" placeholder="Password"/>
                             </div>
 
                             <div class="form-group">
@@ -51,7 +50,7 @@
 
                             <div class="form-group">
                                 <label asp-for="RememberMe">
-                                    <input asp-for="RememberMe" />
+                                    <input asp-for="RememberMe"/>
                                     Remember me?
                                 </label>
                             </div>
@@ -79,6 +78,6 @@
 </div>
 
 @section Scripts
-    {
+{
     @await Html.PartialAsync("_ValidationScripts")
 }

@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ExternalLoginController : Controller
     {
         private readonly SignInManager<StubblUser> _signInManager;
@@ -16,11 +16,10 @@
         [ValidateAntiForgeryToken]
         public IActionResult ExternalLogin(string provider, string returnUrl)
         {
-            var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new { returnUrl });
+            var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new {returnUrl});
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
 
             return Challenge(properties, provider);
-            
         }
     }
 }

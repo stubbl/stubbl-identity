@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.Login
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Stubbl.Identity.Models.Login
+{
     public class LoginInputModel
     {
         [Required(ErrorMessage = "Please enter an email address")]

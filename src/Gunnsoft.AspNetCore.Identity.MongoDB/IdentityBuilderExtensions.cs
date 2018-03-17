@@ -1,14 +1,15 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.DependencyInjection;
-    using global::MongoDB.Driver;
-    using System;
-    using System.Threading;
+﻿using System;
+using System.Threading;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public static class IdentityBuilderExtensions
     {
-        public static IdentityBuilder AddMongoDBStores<TUser, TRole>(this IdentityBuilder extended, MongoUrl url, CancellationToken cancellationToken = default(CancellationToken))
+        public static IdentityBuilder AddMongoDBStores<TUser, TRole>(this IdentityBuilder extended, MongoUrl url,
+            CancellationToken cancellationToken = default(CancellationToken))
             where TRole : IdentityRole
             where TUser : IdentityUser
         {
@@ -25,14 +26,16 @@
 
             if (typeof(TUser) != extended.UserType)
             {
-                var message = $"The TUser type passed into AddIdentity ({extended.UserType}) doesn't match the type passed into AddMongoDBStores ({typeof(TUser)}).";
+                var message =
+                    $"The TUser type passed into AddIdentity ({extended.UserType}) doesn't match the type passed into AddMongoDBStores ({typeof(TUser)}).";
 
                 throw new ArgumentException(message);
             }
 
             if (typeof(TRole) != extended.RoleType)
             {
-                var message = $"The TUser type passed into AddIdentity ({extended.RoleType}) doesn't match the type passed into AddMongoDBStores ({typeof(TRole)}).";
+                var message =
+                    $"The TUser type passed into AddIdentity ({extended.RoleType}) doesn't match the type passed into AddMongoDBStores ({typeof(TRole)}).";
 
                 throw new ArgumentException(message);
             }
@@ -40,8 +43,10 @@
             var rolesCollection = database.GetCollection<TRole>(CollectionNames.Roles);
             var usersCollection = database.GetCollection<TUser>(CollectionNames.Users);
 
-            extended.Services.AddSingleton<IRoleStore<TRole>>(sp => new RoleStore<TRole>(rolesCollection, sp.GetRequiredService<IdentityErrorDescriber>()));
-            extended.Services.AddSingleton<IUserStore<TUser>>(sp => new UserStore<TUser>(usersCollection, sp.GetRequiredService<IdentityErrorDescriber>()));
+            extended.Services.AddSingleton<IRoleStore<TRole>>(sp =>
+                new RoleStore<TRole>(rolesCollection, sp.GetRequiredService<IdentityErrorDescriber>()));
+            extended.Services.AddSingleton<IUserStore<TUser>>(sp =>
+                new UserStore<TUser>(usersCollection, sp.GetRequiredService<IdentityErrorDescriber>()));
 
             IndexConfigurator.CreateNormalizedEmailIndex(usersCollection, cancellationToken);
             IndexConfigurator.CreateNormalizedRoleNameIndex(rolesCollection, cancellationToken);

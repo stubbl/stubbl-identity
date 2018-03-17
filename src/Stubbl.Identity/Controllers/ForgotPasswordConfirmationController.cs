@@ -1,10 +1,10 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.ForgotPasswordConfirmation;
-    using Stubbl.Identity.Services.EmailSender;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.ForgotPasswordConfirmation;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ForgotPasswordConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;

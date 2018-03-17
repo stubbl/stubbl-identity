@@ -1,11 +1,12 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using global::MongoDB.Driver;
-    using System.Threading;
+﻿using System.Threading;
+using MongoDB.Driver;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public static class IndexConfigurator
     {
-        public static async void CreateNormalizedEmailIndex<TUser>(IMongoCollection<TUser> usersCollection, CancellationToken cancellationToken = default(CancellationToken))
+        public static async void CreateNormalizedEmailIndex<TUser>(IMongoCollection<TUser> usersCollection,
+            CancellationToken cancellationToken = default(CancellationToken))
             where TUser : IdentityUser
         {
             var index = Builders<TUser>.IndexKeys.Ascending(t => t.NormalizedEmailAddress);
@@ -17,7 +18,8 @@
             await usersCollection.Indexes.CreateOneAsync(index, options, cancellationToken);
         }
 
-        public static async void CreateNormalizedRoleNameIndex<TRole>(IMongoCollection<TRole> rolesCollection, CancellationToken cancellationToken = default(CancellationToken))
+        public static async void CreateNormalizedRoleNameIndex<TRole>(IMongoCollection<TRole> rolesCollection,
+            CancellationToken cancellationToken = default(CancellationToken))
             where TRole : IdentityRole
         {
             var index = Builders<TRole>.IndexKeys.Ascending(t => t.NormalizedName);
@@ -29,7 +31,8 @@
             await rolesCollection.Indexes.CreateOneAsync(index, options, cancellationToken);
         }
 
-        public static async void CreateNormalizedUserNameIndex<TUser>(IMongoCollection<TUser> usersCollection, CancellationToken cancellationToken = default(CancellationToken))
+        public static async void CreateNormalizedUserNameIndex<TUser>(IMongoCollection<TUser> usersCollection,
+            CancellationToken cancellationToken = default(CancellationToken))
             where TUser : IdentityUser
         {
             var index = Builders<TUser>.IndexKeys.Ascending(t => t.NormalizedUsername);

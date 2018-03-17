@@ -1,10 +1,10 @@
-﻿namespace Stubbl.Identity.MvcClient
-{
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.DependencyInjection;
-    using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
+namespace Stubbl.Identity.MvcClient
+{
     public class Startup
     {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

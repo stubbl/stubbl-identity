@@ -1,10 +1,10 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Services.EmailSender;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ResendEmailAddressConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;
@@ -28,14 +28,16 @@
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token, returnUrl }, Request.Scheme);
+            var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
+                Request.Scheme);
 
             var subject = "Stubbl: Please confirm your email address";
-            var message = $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
+            var message =
+                $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 
             await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
 
-            return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+            return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
         }
     }
 }

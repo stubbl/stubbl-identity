@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
+namespace Stubbl.Identity.Controllers
+{
     [Authorize]
     public class HomeController : Controller
     {

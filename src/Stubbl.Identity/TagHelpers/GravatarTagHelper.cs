@@ -1,12 +1,12 @@
-﻿namespace Stubbl.Identity.TagHelpers
-{
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using Microsoft.AspNetCore.Razor.TagHelpers;
-    using System;
-    using System.Security.Cryptography;
-    using System.Text;
+﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
+namespace Stubbl.Identity.TagHelpers
+{
     [HtmlTargetElement("img", Attributes = EmailAddressAttributeName)]
     public class GravatarTagHelper : TagHelper
     {
@@ -20,19 +20,17 @@
         [HtmlAttributeName(EmailAddressAttributeName)]
         public string EmailAddress { get; set; }
 
-        [HtmlAttributeName(SizeAttributeName)]
-        public string Size { get; set; }
+        [HtmlAttributeName(SizeAttributeName)] public string Size { get; set; }
 
-        [HtmlAttributeNotBound]
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
+        [HtmlAttributeNotBound] [ViewContext] public ViewContext ViewContext { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             var md5Hash = GenerateMd5Hash(EmailAddress);
             var uri = new Uri($"https://gravatar.com/avatar/{md5Hash}?d={Default}&s={Size}");
 
-            output.Attributes.SetAttribute("src", uri.GetComponents(UriComponents.AbsoluteUri & ~UriComponents.Port, UriFormat.UriEscaped));
+            output.Attributes.SetAttribute("src",
+                uri.GetComponents(UriComponents.AbsoluteUri & ~UriComponents.Port, UriFormat.UriEscaped));
         }
 
         private static string GenerateMd5Hash(string value)

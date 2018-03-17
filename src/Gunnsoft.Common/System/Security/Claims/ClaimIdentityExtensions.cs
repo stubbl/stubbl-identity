@@ -1,8 +1,8 @@
-﻿namespace System.Security.Claims
-{
-    using Collections.Generic;
-    using Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+namespace System.Security.Claims
+{
     public static class ClaimIdentityExtensions
     {
         public static void AddOrReplaceClaim(this ClaimsIdentity extended, Claim claim)
@@ -29,7 +29,7 @@
 
         public static void AddOrReplaceClaims(this ClaimsIdentity extended, IEnumerable<Claim> claims)
         {
-            foreach(var claim in claims)
+            foreach (var claim in claims)
             {
                 extended.AddOrReplaceClaim(claim);
             }

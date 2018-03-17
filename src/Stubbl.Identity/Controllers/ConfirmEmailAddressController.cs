@@ -1,10 +1,10 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ConfirmEmailAddressController : Controller
     {
         private readonly UserManager<StubblUser> _userManager;
@@ -41,7 +41,7 @@
                 }
             }
 
-            return RedirectToRoute("ConfirmEmailAddressConfirmation", new { user.EmailAddress, returnUrl });
+            return RedirectToRoute("ConfirmEmailAddressConfirmation", new {user.EmailAddress, returnUrl});
         }
     }
 }

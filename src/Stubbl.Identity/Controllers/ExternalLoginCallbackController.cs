@@ -1,17 +1,17 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using IdentityServer4.Services;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Stubbl.Identity.Models.ExternalLoginCallback;
-    using Stubbl.Identity.Services.EmailSender;
-    using System;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Stubbl.Identity.Models.ExternalLoginCallback;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ExternalLoginCallbackController : Controller
     {
         private readonly IEmailSender _emailSender;
@@ -31,7 +31,8 @@
             _userManager = userManager;
         }
 
-        public ExternalLoginCallbackViewModel BuildExternalLoginCallbackViewModel(ExternalLoginCallbackInputModel model, string loginProvider, string returnUrl)
+        public ExternalLoginCallbackViewModel BuildExternalLoginCallbackViewModel(ExternalLoginCallbackInputModel model,
+            string loginProvider, string returnUrl)
         {
             return new ExternalLoginCallbackViewModel
             {
@@ -64,7 +65,9 @@
                 return RedirectToRoute("Login");
             }
 
-            var signInResult = await _signInManager.ExternalLoginSignInAsync(loginInfo.LoginProvider, loginInfo.ProviderKey, isPersistent: false, bypassTwoFactor: false);
+            var signInResult =
+                await _signInManager.ExternalLoginSignInAsync(loginInfo.LoginProvider, loginInfo.ProviderKey, false,
+                    false);
 
             if (!signInResult.Succeeded)
             {
@@ -83,7 +86,7 @@
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new { returnUrl });
+                    return RedirectToRoute("LoginTwoFactor", new {returnUrl});
                 }
 
                 var emailAddress = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
@@ -104,6 +107,7 @@
 
                 return await ExternalLoginCallback(model, returnUrl, true);
             }
+
             if (_interactionService.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
@@ -114,7 +118,8 @@
 
         [HttpPost("/external-login-callback", Name = "ExternalLoginCallback")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalLoginCallback(ExternalLoginCallbackInputModel model, string returnUrl, bool isEmailAddressConfirmed)
+        public async Task<IActionResult> ExternalLoginCallback(ExternalLoginCallbackInputModel model, string returnUrl,
+            bool isEmailAddressConfirmed)
         {
             var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -180,20 +185,22 @@
             if (!isEmailAddressConfirmed)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token, returnUrl }, Request.Scheme);
+                var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
+                    Request.Scheme);
 
                 var subject = "Stubbl: Please confirm your email address";
-                var message = $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
+                var message =
+                    $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 
                 await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
 
                 if (_signInManager.Options.SignIn.RequireConfirmedEmail)
                 {
-                    return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                    return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
                 }
             }
 
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
 
             if (_interactionService.IsValidReturnUrl(returnUrl))
             {

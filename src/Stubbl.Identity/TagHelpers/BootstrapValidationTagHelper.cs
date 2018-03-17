@@ -1,12 +1,12 @@
-﻿namespace Stubbl.Identity.TagHelpers
-{
-    using Microsoft.AspNetCore.Mvc.Rendering;
-    using Microsoft.AspNetCore.Mvc.TagHelpers;
-    using Microsoft.AspNetCore.Mvc.ViewFeatures;
-    using Microsoft.AspNetCore.Razor.TagHelpers;
-    using System;
-    using System.Linq;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
+namespace Stubbl.Identity.TagHelpers
+{
     [HtmlTargetElement("input", Attributes = ForAttributeName)]
     [HtmlTargetElement("select", Attributes = ForAttributeName)]
     [HtmlTargetElement("textarea", Attributes = ForAttributeName)]
@@ -14,12 +14,9 @@
     {
         private const string ForAttributeName = "asp-for";
 
-        [HtmlAttributeName(ForAttributeName)]
-        public ModelExpression For { get; set; }
+        [HtmlAttributeName(ForAttributeName)] public ModelExpression For { get; set; }
 
-        [HtmlAttributeNotBound]
-        [ViewContext]
-        public ViewContext ViewContext { get; set; }
+        [HtmlAttributeNotBound] [ViewContext] public ViewContext ViewContext { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -46,7 +43,10 @@
             {
                 tagBuilder.AddCssClass("is-invalid");
             }
-            else if (!string.Equals(context.AllAttributes.SingleOrDefault(a => string.Equals(a.Name, "type", StringComparison.InvariantCultureIgnoreCase))?.Value?.ToString(), "password", StringComparison.InvariantCulture))
+            else if (!string.Equals(
+                context.AllAttributes
+                    .SingleOrDefault(a => string.Equals(a.Name, "type", StringComparison.InvariantCultureIgnoreCase))
+                    ?.Value?.ToString(), "password", StringComparison.InvariantCulture))
             {
                 tagBuilder.AddCssClass("is-valid");
             }

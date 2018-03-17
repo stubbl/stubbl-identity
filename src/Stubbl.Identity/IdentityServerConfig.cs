@@ -1,9 +1,8 @@
-﻿using IdentityModel;
+﻿using System.Collections.Generic;
+using System.Linq;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Stubbl.Identity
 {
@@ -13,7 +12,7 @@ namespace Stubbl.Identity
         {
             return new List<ApiResource>
             {
-                new ApiResource( "stubbl-api", "Stubbl API" ),
+                new ApiResource("stubbl-api", "Stubbl API")
             };
         }
 
@@ -38,7 +37,7 @@ namespace Stubbl.Identity
                     IdentityServerConstants.StandardScopes.Email,
                     IdentityServerConstants.StandardScopes.OfflineAccess,
                     IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.Profile
                 },
                 ClientId = "stubbl-identity-mvc-client",
                 ClientName = "Stubbl Identity MVC Client",
@@ -46,8 +45,8 @@ namespace Stubbl.Identity
                 {
                     new Secret("secret".Sha256())
                 },
-                PostLogoutRedirectUris = { "http://localhost:57255/signout-callback-oidc" },
-                RedirectUris = { "http://localhost:57255/signin-oidc" },
+                PostLogoutRedirectUris = {"http://localhost:57255/signout-callback-oidc"},
+                RedirectUris = {"http://localhost:57255/signin-oidc"},
                 RequireConsent = true
             };
 

@@ -1,17 +1,17 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using IdentityServer4.Services;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.Register;
-    using Stubbl.Identity.Services.EmailSender;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.Register;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class RegisterController : Controller
     {
-        private readonly IIdentityServerInteractionService _interactionService;
         private readonly IEmailSender _emailSender;
+        private readonly IIdentityServerInteractionService _interactionService;
         private readonly SignInManager<StubblUser> _signInManager;
         private readonly UserManager<StubblUser> _userManager;
 
@@ -24,13 +24,14 @@
             _userManager = userManager;
         }
 
-        public RegisterViewModel BuildRegisterViewModel(string returnUrl, string emailAddress = null, RegisterInputModel inputModel = null)
+        public RegisterViewModel BuildRegisterViewModel(string returnUrl, string emailAddress = null,
+            RegisterInputModel inputModel = null)
         {
             return new RegisterViewModel
             {
                 EmailAddress = emailAddress ?? inputModel?.EmailAddress,
                 Password = inputModel?.Password,
-                ReturnUrl = returnUrl,
+                ReturnUrl = returnUrl
             };
         }
 
@@ -91,19 +92,21 @@
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token, returnUrl }, Request.Scheme);
+            var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
+                Request.Scheme);
 
             var subject = "Stubbl: Please confirm your email address";
-            var message = $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
+            var message =
+                $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 
             await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
 
             if (_signInManager.Options.SignIn.RequireConfirmedEmail)
             {
-                return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
             }
 
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
 
             if (_interactionService.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
             {

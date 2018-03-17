@@ -1,18 +1,18 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using Microsoft.AspNetCore.Identity;
-    using global::MongoDB.Bson;
-    using global::MongoDB.Driver;
-    using System;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public class RoleStore<TRole> : IQueryableRoleStore<TRole>
         where TRole : IdentityRole
     {
-        private readonly IMongoCollection<TRole> _rolesCollection;
         private readonly IdentityErrorDescriber _errorDescriber;
+        private readonly IMongoCollection<TRole> _rolesCollection;
 
         public RoleStore(IMongoCollection<TRole> rolesCollection,
             IdentityErrorDescriber errorDescriber = null)
@@ -24,11 +24,14 @@
         public IQueryable<TRole> Roles => _rolesCollection.AsQueryable();
 
         /// <summary>
-        /// Creates a new role in a store as an asynchronous operation.
+        ///     Creates a new role in a store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role to create in the store.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that represents the <see cref="IdentityResult"/> of the asynchronous query.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that represents the <see cref="IdentityResult" /> of the asynchronous query.</returns>
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -44,11 +47,14 @@
         }
 
         /// <summary>
-        /// Deletes a role from the store as an asynchronous operation.
+        ///     Deletes a role from the store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role to delete from the store.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that represents the <see cref="IdentityResult"/> of the asynchronous query.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that represents the <see cref="IdentityResult" /> of the asynchronous query.</returns>
         public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -73,11 +79,14 @@
         }
 
         /// <summary>
-        /// Finds the role who has the specified ID as an asynchronous operation.
+        ///     Finds the role who has the specified ID as an asynchronous operation.
         /// </summary>
         /// <param name="roleId">The role ID to look for.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that result of the look up.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that result of the look up.</returns>
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -97,11 +106,14 @@
         }
 
         /// <summary>
-        /// Finds the role who has the specified normalized name as an asynchronous operation.
+        ///     Finds the role who has the specified normalized name as an asynchronous operation.
         /// </summary>
         /// <param name="normalizedRoleName">The normalized role name to look for.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that result of the look up.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that result of the look up.</returns>
         public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -116,11 +128,14 @@
         }
 
         /// <summary>
-        /// Get a role's normalized name as an asynchronous operation.
+        ///     Get a role's normalized name as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role whose normalized name should be retrieved.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that contains the name of the role.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that contains the name of the role.</returns>
         public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -134,11 +149,14 @@
         }
 
         /// <summary>
-        /// Gets the ID for a role from the store as an asynchronous operation.
+        ///     Gets the ID for a role from the store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role whose ID should be returned.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that contains the ID of the role.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that contains the ID of the role.</returns>
         public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -152,11 +170,14 @@
         }
 
         /// <summary>
-        /// Gets the name of a role from the store as an asynchronous operation.
+        ///     Gets the name of a role from the store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role whose name should be returned.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that contains the name of the role.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that contains the name of the role.</returns>
         public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -170,12 +191,15 @@
         }
 
         /// <summary>
-        /// Set a role's normalized name as an asynchronous operation.
+        ///     Set a role's normalized name as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role whose normalized name should be set.</param>
         /// <param name="normalizedName">The normalized name to set</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>The <see cref="Task" /> that represents the asynchronous operation.</returns>
         public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -191,12 +215,15 @@
         }
 
         /// <summary>
-        /// Sets the name of a role in the store as an asynchronous operation.
+        ///     Sets the name of a role in the store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role whose name should be set.</param>
         /// <param name="roleName">The name of the role.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>The <see cref="Task" /> that represents the asynchronous operation.</returns>
         public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -212,11 +239,14 @@
         }
 
         /// <summary>
-        /// Updates a role in a store as an asynchronous operation.
+        ///     Updates a role in a store as an asynchronous operation.
         /// </summary>
         /// <param name="role">The role to update in the store.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>A <see cref="Task{TResult}"/> that represents the <see cref="IdentityResult"/> of the asynchronous query.</returns>
+        /// <param name="cancellationToken">
+        ///     The <see cref="CancellationToken" /> used to propagate notifications that the operation
+        ///     should be canceled.
+        /// </param>
+        /// <returns>A <see cref="Task{TResult}" /> that represents the <see cref="IdentityResult" /> of the asynchronous query.</returns>
         public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -226,7 +256,9 @@
                 throw new ArgumentNullException(nameof(role));
             }
 
-            var result = await _rolesCollection.ReplaceOneAsync(r => r.Id == role.Id, role, cancellationToken: cancellationToken);
+            var result =
+                await _rolesCollection.ReplaceOneAsync(r => r.Id == role.Id, role,
+                    cancellationToken: cancellationToken);
 
             if (result.ModifiedCount != 1)
             {

@@ -1,11 +1,11 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.ForgotPassword;
-    using Stubbl.Identity.Services.EmailSender;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.ForgotPassword;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ForgotPasswordController : Controller
     {
         private readonly IEmailSender _emailSender;
@@ -51,18 +51,19 @@
 
             if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
             {
-                return RedirectToRoute("ForgotPasswordConfirmation", new { returnUrl });
+                return RedirectToRoute("ForgotPasswordConfirmation", new {returnUrl});
             }
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = Url.RouteUrl("ResetPassword", new { code, returnUrl }, Request.Scheme);
+            var callbackUrl = Url.RouteUrl("ResetPassword", new {code, returnUrl}, Request.Scheme);
 
             var subject = "Reset Password";
-            var message = $"Reset your password by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>";
+            var message =
+                $"Reset your password by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>";
 
             await _emailSender.SendEmailAsync(model.EmailAddress, subject, message);
 
-            return RedirectToRoute("ForgotPasswordConfirmation", new { returnUrl });
+            return RedirectToRoute("ForgotPasswordConfirmation", new {returnUrl});
         }
     }
 }

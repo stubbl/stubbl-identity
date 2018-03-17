@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.ResetPassword
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Stubbl.Identity.Models.ResetPassword
+{
     public class ResetPasswordInputModel
     {
         public string Code { get; set; }

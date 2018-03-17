@@ -1,8 +1,8 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public static class ClaimsExtensions
     {
         public static void AddOrReplace(this IList<IdentityUserClaim> extended, IdentityUserClaim claim)

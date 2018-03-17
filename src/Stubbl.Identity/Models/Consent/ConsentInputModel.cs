@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.Consent
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace Stubbl.Identity.Models.Consent
+{
     public class ConsentInputModel
     {
         public string Button { get; set; }

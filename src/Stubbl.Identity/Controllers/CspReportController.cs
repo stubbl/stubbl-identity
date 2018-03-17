@@ -1,9 +1,9 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using System.IO;
+﻿using System.IO;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
+namespace Stubbl.Identity.Controllers
+{
     public class CspReportController : Controller
     {
         private readonly ILogger<CspReportController> _logger;

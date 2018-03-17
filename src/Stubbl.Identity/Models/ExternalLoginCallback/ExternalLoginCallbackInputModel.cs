@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.ExternalLoginCallback
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Stubbl.Identity.Models.ExternalLoginCallback
+{
     public class ExternalLoginCallbackInputModel
     {
         [Required(ErrorMessage = "Please enter an email address")]

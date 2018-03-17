@@ -1,12 +1,12 @@
-﻿namespace Stubbl.Identity
-{
-    using System.Collections.Generic;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using IdentityModel;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Options;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using IdentityModel;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
+namespace Stubbl.Identity
+{
     public class StubblClaimsPrincipalFactory : UserClaimsPrincipalFactory<StubblUser, StubblRole>
     {
         public StubblClaimsPrincipalFactory(UserManager<StubblUser> userManager,
@@ -22,7 +22,7 @@
             var claims = new List<Claim>();
 
             // Profile
-            claims.AddIfValueNotNull(JwtClaimTypes.Name, string.Join(" ", new[] { user.FirstName, user.LastName }));
+            claims.AddIfValueNotNull(JwtClaimTypes.Name, string.Join(" ", user.FirstName, user.LastName));
             claims.AddIfValueNotNull(JwtClaimTypes.FamilyName, user.LastName);
             claims.AddIfValueNotNull(JwtClaimTypes.GivenName, user.FirstName);
             //claims.AddIfValueNotNull(JwtClaimTypes.MiddleName, ...);

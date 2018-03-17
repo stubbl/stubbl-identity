@@ -1,13 +1,13 @@
-﻿namespace Stubbl.Identity.Services
-{
-    using IdentityModel;
-    using IdentityServer4.Models;
-    using IdentityServer4.Services;
-    using Microsoft.AspNetCore.Identity;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using IdentityModel;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Identity;
 
+namespace Stubbl.Identity.Services
+{
     public class StubblProfileService : IProfileService
     {
         private readonly UserManager<StubblUser> _userManager;

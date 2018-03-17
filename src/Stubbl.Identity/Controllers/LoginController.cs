@@ -1,16 +1,16 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.Login;
+
 namespace Stubbl.Identity.Controllers
 {
-    using IdentityServer4.Models;
-    using IdentityServer4.Services;
-    using IdentityServer4.Stores;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.Login;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     public class LoginController : Controller
     {
         private readonly IClientStore _clientStore;
@@ -49,7 +49,8 @@ namespace Stubbl.Identity.Controllers
 
                     if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
                     {
-                        loginProviders = loginProviders.Where(lp => client.IdentityProviderRestrictions.Contains(lp)).ToList();
+                        loginProviders = loginProviders.Where(lp => client.IdentityProviderRestrictions.Contains(lp))
+                            .ToList();
                     }
                 }
             }
@@ -85,10 +86,12 @@ namespace Stubbl.Identity.Controllers
             var authorizationContext = await _interactionService.GetAuthorizationContextAsync(returnUrl);
 
             if (authorizationContext?.IdP != null
-                && (await _signInManager.GetExternalAuthenticationSchemesAsync()).Any(p => string.Equals(p.Name, authorizationContext.IdP, StringComparison.InvariantCultureIgnoreCase)))
+                && (await _signInManager.GetExternalAuthenticationSchemesAsync()).Any(p =>
+                    string.Equals(p.Name, authorizationContext.IdP, StringComparison.InvariantCultureIgnoreCase)))
             {
-                var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new { returnUrl });
-                var properties = _signInManager.ConfigureExternalAuthenticationProperties(authorizationContext.IdP, redirectUrl);
+                var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new {returnUrl});
+                var properties =
+                    _signInManager.ConfigureExternalAuthenticationProperties(authorizationContext.IdP, redirectUrl);
 
                 return Challenge(properties, authorizationContext.IdP);
             }
@@ -110,7 +113,8 @@ namespace Stubbl.Identity.Controllers
                 return View(viewModel);
             }
 
-            var signInResult = await _signInManager.PasswordSignInAsync(model.EmailAddress, model.Password, model.RememberMe, lockoutOnFailure: true);
+            var signInResult =
+                await _signInManager.PasswordSignInAsync(model.EmailAddress, model.Password, model.RememberMe, true);
 
             if (!signInResult.Succeeded)
             {
@@ -128,7 +132,7 @@ namespace Stubbl.Identity.Controllers
 
                         if (!await _userManager.IsEmailConfirmedAsync(user))
                         {
-                            return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                            return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
                         }
                     }
                 }
@@ -136,7 +140,7 @@ namespace Stubbl.Identity.Controllers
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = model.RememberMe });
+                    return RedirectToRoute("LoginTwoFactor", new {returnUrl, rememberMe = model.RememberMe});
                 }
 
                 ModelState.AddModelError("", "The email address and/or password is incorrect");

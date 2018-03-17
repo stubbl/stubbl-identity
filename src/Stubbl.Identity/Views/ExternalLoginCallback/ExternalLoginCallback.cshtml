@@ -1,6 +1,5 @@
 ﻿@using Stubbl.Identity.Models.ExternalLoginCallback
-
-@model ExternalLoginCallbackViewModel
+@model Stubbl.Identity.Models.ExternalLoginCallback.ExternalLoginCallbackViewModel
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -22,14 +21,14 @@
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label asp-for="FirstName">First name</label>
-                        <input type="text" asp-for="FirstName" class="form-control" />
+                        <input type="text" asp-for="FirstName" class="form-control"/>
                         <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label asp-for="LastName">Last name</label>
-                        <input type="text" asp-for="LastName" class="form-control" />
+                        <input type="text" asp-for="LastName" class="form-control"/>
                         <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                 </div>
@@ -37,7 +36,7 @@
 
             <div class="form-group">
                 <label asp-for="EmailAddress">Email address</label>
-                <input type="email" asp-for="EmailAddress" class="form-control" />
+                <input type="email" asp-for="EmailAddress" class="form-control"/>
                 <span asp-validation-for="EmailAddress" class="text-danger"></span>
             </div>
 

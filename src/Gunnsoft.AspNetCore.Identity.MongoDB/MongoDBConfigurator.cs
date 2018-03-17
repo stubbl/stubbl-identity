@@ -1,9 +1,9 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using global::MongoDB.Bson;
-    using global::MongoDB.Bson.Serialization;
-    using global::MongoDB.Bson.Serialization.Conventions;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public static class MongoDBConfigurator
     {
         public static void Configure()

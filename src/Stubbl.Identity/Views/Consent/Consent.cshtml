@@ -1,6 +1,5 @@
 ﻿@using Stubbl.Identity.Models.Consent
-
-@model ConsentViewModel
+@model Stubbl.Identity.Models.Consent.ConsentViewModel
 
 <div class="page-consent">
     <div class="page-header">
@@ -12,13 +11,15 @@
 
     @if (Model.ClientLogoUrl != null)
     {
-        <div class="client-logo"><img src="@Model.ClientLogoUrl"></div>
+        <div class="client-logo">
+            <img src="@Model.ClientLogoUrl">
+        </div>
     }
 
     @Html.Partial("_ValidationSummary")
 
     <form asp-route="Consent">
-        <input type="hidden" asp-for="ReturnUrl" />
+        <input type="hidden" asp-for="ReturnUrl"/>
 
         <p class="lead">Uncheck the permissions you do not wish to grant.</p>
 
@@ -66,7 +67,7 @@
                     {
                         <div class="form-group text-center">
                             <label>
-                                <input asp-for="RememberConsent" />
+                                <input asp-for="RememberConsent"/>
                                 Remember my decision?
                             </label>
                         </div>

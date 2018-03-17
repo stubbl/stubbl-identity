@@ -1,6 +1,5 @@
 ﻿@using Stubbl.Identity.Models.Logout
-
-@model LogoutViewModel
+@model Stubbl.Identity.Models.Logout.LogoutViewModel
 
 <div class="row">
     <div class="col-md-6 offset-md-3">
@@ -13,7 +12,7 @@
         <p class="lead">Would you like to sign out of Stubbl?</p>
 
         <form asp-route="Logout">
-            <input type="hidden" asp-for="LogoutId" value="@Model.LogoutId" />
+            <input type="hidden" asp-for="LogoutId" value="@Model.LogoutId"/>
 
             <div class="form-group">
                 <div class="row">

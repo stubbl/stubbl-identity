@@ -1,7 +1,7 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using global::MongoDB.Bson;
+﻿using MongoDB.Bson;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public class IdentityRole
     {
         public IdentityRole()

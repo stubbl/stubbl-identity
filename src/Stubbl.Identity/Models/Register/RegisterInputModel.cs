@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.Register
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Stubbl.Identity.Models.Register
+{
     public class RegisterInputModel
     {
         [Required(ErrorMessage = "Please enter an email address")]

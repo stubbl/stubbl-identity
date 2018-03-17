@@ -1,11 +1,11 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.RegisterConfirmation;
-    using Stubbl.Identity.Services.EmailSender;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.RegisterConfirmation;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Controllers
+{
     public class RegisterConfirmationController : Controller
     {
         private readonly IEmailSender _emailSender;

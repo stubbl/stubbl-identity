@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.Models.ForgotPassword
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Stubbl.Identity.Models.ForgotPassword
+{
     public class ForgotPasswordInputModel
     {
         [Required(ErrorMessage = "Please enter an email address")]

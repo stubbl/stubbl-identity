@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity.MvcClient.Controllers
-{
-    using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
+namespace Stubbl.Identity.MvcClient.Controllers
+{
     public class HomeController : Controller
     {
         [HttpGet("", Name = "Home")]

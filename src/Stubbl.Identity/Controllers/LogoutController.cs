@@ -1,15 +1,16 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using IdentityServer4.Services;
-    using Stubbl.Identity.Models.Logout;
-    using IdentityModel;
-    using IdentityServer4.Extensions;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Identity;
+﻿using System.Threading.Tasks;
+using IdentityModel;
+using IdentityServer4;
+using IdentityServer4.Extensions;
+using IdentityServer4.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.Logout;
 
+namespace Stubbl.Identity.Controllers
+{
     public class LogoutController : Controller
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -48,9 +49,9 @@
 
             if (viewModel.TriggerExternalSignout)
             {
-                string url = Url.RouteUrl("Logout", new { logoutId = viewModel.LogoutId });
+                var url = Url.RouteUrl("Logout", new {logoutId = viewModel.LogoutId});
 
-                return SignOut(new AuthenticationProperties { RedirectUri = url }, viewModel.LoginProvider);
+                return SignOut(new AuthenticationProperties {RedirectUri = url}, viewModel.LoginProvider);
             }
 
             return View("LoggedOut", viewModel);
@@ -75,9 +76,10 @@
             {
                 var identityProvider = user.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
 
-                if (identityProvider != null && identityProvider != IdentityServer4.IdentityServerConstants.LocalIdentityProvider)
+                if (identityProvider != null && identityProvider != IdentityServerConstants.LocalIdentityProvider)
                 {
-                    var providerSupportsSignout = await _httpContextAccessor.HttpContext.GetSchemeSupportsSignOutAsync(identityProvider);
+                    var providerSupportsSignout =
+                        await _httpContextAccessor.HttpContext.GetSchemeSupportsSignOutAsync(identityProvider);
 
                     if (providerSupportsSignout)
                     {

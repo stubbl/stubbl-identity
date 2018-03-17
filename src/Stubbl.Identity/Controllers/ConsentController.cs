@@ -1,16 +1,17 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using IdentityServer4.Models;
-    using IdentityServer4.Services;
-    using IdentityServer4.Stores;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using Stubbl.Identity.Models.Consent;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Scope = Models.Consent.Scope;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityServer4;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Stubbl.Identity.Models.Consent;
+using Scope = Stubbl.Identity.Models.Consent.Scope;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ConsentController : Controller
     {
         private readonly IClientStore _clientStore;
@@ -43,37 +44,39 @@
             };
 
             viewModel.IdentityScopes = resources.IdentityResources.Select(ir =>
-                new Scope
-                {
-                    Checked = viewModel.ScopesConsented.Contains(ir.Name) || model == null || ir.Required,
-                    Description = ir.Description,
-                    DisplayName = ir.DisplayName,
-                    Emphasize = ir.Emphasize,
-                    Name = ir.Name,
-                    Required = ir.Required
-                })
+                    new Scope
+                    {
+                        Checked = viewModel.ScopesConsented.Contains(ir.Name) || model == null || ir.Required,
+                        Description = ir.Description,
+                        DisplayName = ir.DisplayName,
+                        Emphasize = ir.Emphasize,
+                        Name = ir.Name,
+                        Required = ir.Required
+                    })
                 .ToList();
             viewModel.ResourceScopes = resources.ApiResources.SelectMany(ar => ar.Scopes).Select(s =>
-                new Scope
-                {
-                    Checked = viewModel.ScopesConsented.Contains(s.Name) || model == null || s.Required,
-                    Description = s.Description,
-                    DisplayName = s.DisplayName,
-                    Emphasize = s.Emphasize,
-                    Name = s.Name,
-                    Required = s.Required
-                })
+                    new Scope
+                    {
+                        Checked = viewModel.ScopesConsented.Contains(s.Name) || model == null || s.Required,
+                        Description = s.Description,
+                        DisplayName = s.DisplayName,
+                        Emphasize = s.Emphasize,
+                        Name = s.Name,
+                        Required = s.Required
+                    })
                 .ToList();
 
             if (ConsentConfig.EnableOfflineAccess && resources.OfflineAccess)
             {
-                viewModel.ResourceScopes = viewModel.ResourceScopes.Union(new Scope[] {
+                viewModel.ResourceScopes = viewModel.ResourceScopes.Union(new[]
+                    {
                         new Scope
                         {
-                            Checked = viewModel.ScopesConsented.Contains(IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess) || model == null,
+                            Checked = viewModel.ScopesConsented.Contains(IdentityServerConstants.StandardScopes
+                                          .OfflineAccess) || model == null,
                             Description = "Access to your applications and resources, even when you are offline",
                             DisplayName = "Offline access",
-                            Name = IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess,
+                            Name = IdentityServerConstants.StandardScopes.OfflineAccess,
                             Emphasize = true
                         }
                     })
@@ -83,7 +86,8 @@
             return viewModel;
         }
 
-        private async Task<ConsentViewModel> BuildConsentViewModelAsync(string returnUrl, ConsentInputModel model = null)
+        private async Task<ConsentViewModel> BuildConsentViewModelAsync(string returnUrl,
+            ConsentInputModel model = null)
         {
             var request = await _interactionService.GetAuthorizationContextAsync(returnUrl);
 
@@ -99,10 +103,9 @@
                     {
                         return BuildConsentViewModel(model, returnUrl, request, client, resources);
                     }
-                    else
-                    {
-                        _logger.LogError("No scopes matching: {0}", request.ScopesRequested.Aggregate((x, y) => x + ", " + y));
-                    }
+
+                    _logger.LogError("No scopes matching: {0}",
+                        request.ScopesRequested.Aggregate((x, y) => x + ", " + y));
                 }
                 else
                 {
@@ -150,7 +153,7 @@
 
                     if (ConsentConfig.EnableOfflineAccess == false)
                     {
-                        scopes = scopes.Where(s => s != IdentityServer4.IdentityServerConstants.StandardScopes.OfflineAccess);
+                        scopes = scopes.Where(s => s != IdentityServerConstants.StandardScopes.OfflineAccess);
                     }
 
                     grantedConsent = new ConsentResponse

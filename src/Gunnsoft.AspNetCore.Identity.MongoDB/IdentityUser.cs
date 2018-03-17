@@ -1,10 +1,10 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using Data;
-    using global::MongoDB.Bson;
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using CodeContrib.AspNetCore.Identity.MongoDB.Data;
+using MongoDB.Bson;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     public class IdentityUser
     {
         public IdentityUser()
@@ -33,7 +33,7 @@
         public List<string> Roles { get; internal set; }
         public string SecurityStamp { get; set; }
         public List<IdentityUserToken> Tokens { get; internal set; }
-		public bool TwoFactorEnabled { get; set; }
+        public bool TwoFactorEnabled { get; set; }
         public string Username { get; set; }
     }
 }

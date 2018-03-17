@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Controllers
-{
-    using Microsoft.AspNetCore.Mvc;
-    using Stubbl.Identity.Models.ResetPasswordConfirmation;
+﻿using Microsoft.AspNetCore.Mvc;
+using Stubbl.Identity.Models.ResetPasswordConfirmation;
 
+namespace Stubbl.Identity.Controllers
+{
     public class ResetPasswordConfirmationController : Controller
     {
         [HttpGet("/reset-password-confirmation", Name = "ResetPasswordConfirmation")]

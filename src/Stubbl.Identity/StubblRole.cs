@@ -1,7 +1,7 @@
-﻿namespace Stubbl.Identity
-{
-    using CodeContrib.AspNetCore.Identity.MongoDB;
+﻿using CodeContrib.AspNetCore.Identity.MongoDB;
 
+namespace Stubbl.Identity
+{
     public class StubblRole : IdentityRole
     {
     }

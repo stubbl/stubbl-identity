@@ -1,36 +1,35 @@
-﻿namespace Stubbl.Identity
-{
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
-    using CodeContrib.AspNetCore.Identity.MongoDB;
-    using IdentityModel;
-    using IdentityServer4.AspNetIdentity;
-    using IdentityServer4.Models;
-    using IdentityServer4.Stores;
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Authentication.OAuth;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using MongoDB.Bson.Serialization;
-    using MongoDB.Driver;
-    using Newtonsoft.Json.Linq;
-    using NWebsec.AspNetCore.Middleware;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Reflection;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
+using System.Security.Claims;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using CodeContrib.AspNetCore.Identity.MongoDB;
+using Gunnsoft.IdentityServer;
+using Gunnsoft.IdentityServer.Stores.MongoDB;
+using IdentityModel;
+using IdentityServer4.AspNetIdentity;
+using IdentityServer4.Models;
+using IdentityServer4.Stores;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
+using NWebsec.AspNetCore.Middleware;
 
+namespace Stubbl.Identity
+{
     public class Startup
     {
-        private readonly static Assembly s_assembly;
+        private static readonly Assembly s_assembly;
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
 
@@ -56,7 +55,7 @@
 
             if (_hostingEnvironment.IsProduction())
             {
-                app.UseHsts(o => o.MaxAge(days: 30).IncludeSubdomains());
+                app.UseHsts(o => o.MaxAge(30).IncludeSubdomains());
             }
 
             Action<IFluentCspOptions> cspo = o =>
@@ -110,7 +109,7 @@
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            var mongoDbConnectionString = _configuration.GetValue<string>("MongoDB:ConnectionString");
+            var mongoConnectionString = _configuration.GetValue<string>("MongoDB:ConnectionString");
 
             BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
             {
@@ -118,12 +117,12 @@
                 cm.SetIgnoreExtraElements(true);
             });
 
-            var url = new MongoUrl(mongoDbConnectionString);
+            var url = new MongoUrl(mongoConnectionString);
             var client = new MongoClient(url);
             var database = client.GetDatabase(url.DatabaseName);
             var persistedGrantCollection = database.GetCollection<PersistedGrant>("persistedGrants");
 
-            services.AddTransient<IPersistedGrantStore>(sp => new MongoDbPersistedGrantStore(persistedGrantCollection));
+            services.AddTransient<IPersistedGrantStore>(sp => new MongoPersistedGrantStore(persistedGrantCollection));
 
             // ...
 
@@ -141,7 +140,7 @@
                     o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
                 })
                 .AddErrorDescriber<StubblIdentityErrorDescriber>()
-                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(mongoDbConnectionString))
+                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(mongoConnectionString))
                 .AddDefaultTokenProviders();
 
             services.AddIdentityServer(o =>
@@ -170,11 +169,14 @@
                     {
                         OnCreatingTicket = async context =>
                         {
-                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
+                            var request =
+                                new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
+                            request.Headers.Authorization =
+                                new AuthenticationHeaderValue("Bearer", context.AccessToken);
                             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                            var response = await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
+                            var response =
+                                await context.Backchannel.SendAsync(request, context.HttpContext.RequestAborted);
                             response.EnsureSuccessStatusCode();
 
                             var json = await response.Content.ReadAsStringAsync();
@@ -184,21 +186,24 @@
 
                             if (!string.IsNullOrWhiteSpace(userId))
                             {
-                                context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                                context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId,
+                                    ClaimValueTypes.String, context.Options.ClaimsIssuer));
                             }
 
                             var name = user.Value<string>("name");
 
                             if (!string.IsNullOrWhiteSpace(name))
                             {
-                                context.Identity.AddClaim(new Claim(ClaimTypes.Name, name, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                                context.Identity.AddClaim(new Claim(ClaimTypes.Name, name, ClaimValueTypes.String,
+                                    context.Options.ClaimsIssuer));
                             }
 
                             var emailAddress = user.Value<string>("email");
 
                             if (!string.IsNullOrWhiteSpace(emailAddress))
                             {
-                                context.Identity.AddClaim(new Claim(ClaimTypes.Email, emailAddress, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                                context.Identity.AddClaim(new Claim(ClaimTypes.Email, emailAddress,
+                                    ClaimValueTypes.String, context.Options.ClaimsIssuer));
                             }
                         }
                     };
@@ -227,8 +232,8 @@
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterInstance(_configuration)
-               .As<IConfiguration>()
-               .SingleInstance();
+                .As<IConfiguration>()
+                .SingleInstance();
             containerBuilder.RegisterAssemblyModules(s_assembly);
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
@@ -265,127 +270,6 @@
             extended.AddProfileService<ProfileService<TUser>>();
 
             return extended;
-        }
-    }
-
-    public class MongoDbPersitedGrantStore : IPersistedGrantStore
-    {
-        public Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PersistedGrant> GetAsync(string key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveAllAsync(string subjectId, string clientId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveAllAsync(string subjectId, string clientId, string type)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task RemoveAsync(string key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task StoreAsync(PersistedGrant grant)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MongoDbPersistedGrantStore : IPersistedGrantStore
-    {
-        private readonly IMongoCollection<PersistedGrant> _persistedGrantsCollection;
-
-        public MongoDbPersistedGrantStore(IMongoCollection<PersistedGrant> persistedGrantsCollection)
-        {
-            _persistedGrantsCollection = persistedGrantsCollection;
-        }
-
-        public async Task<IEnumerable<PersistedGrant>> GetAllAsync(string subjectId)
-        {
-            if (subjectId == null)
-            {
-                throw new ArgumentNullException(nameof(subjectId));
-            }
-
-            return await _persistedGrantsCollection.Find(pg => pg.SubjectId == subjectId)
-                .ToListAsync();
-        }
-
-        public async Task<PersistedGrant> GetAsync(string key)
-        {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            return await _persistedGrantsCollection.Find(pg => pg.Key == key)
-                .SortByDescending(pg => pg.CreationTime)
-                .FirstOrDefaultAsync();
-        }
-
-        public async Task RemoveAllAsync(string subjectId, string clientId)
-        {
-            if (subjectId == null)
-            {
-                throw new ArgumentNullException(nameof(subjectId));
-            }
-
-            if (clientId == null)
-            {
-                throw new ArgumentNullException(nameof(clientId));
-            }
-
-            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.SubjectId == subjectId && pg.ClientId == clientId);
-        }
-
-        public async Task RemoveAllAsync(string subjectId, string clientId, string type)
-        {
-            if (subjectId == null)
-            {
-                throw new ArgumentNullException(nameof(subjectId));
-            }
-
-            if (clientId == null)
-            {
-                throw new ArgumentNullException(nameof(clientId));
-            }
-
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.SubjectId == subjectId && pg.ClientId == clientId && pg.Type == type);
-        }
-
-        public async Task RemoveAsync(string key)
-        {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
-
-            await _persistedGrantsCollection.DeleteManyAsync(pg => pg.Key == key);
-        }
-
-        public async Task StoreAsync(PersistedGrant grant)
-        {
-            if (grant == null)
-            {
-                throw new ArgumentNullException(nameof(grant));
-            }
-
-            await _persistedGrantsCollection.InsertOneAsync(grant);
         }
     }
 }

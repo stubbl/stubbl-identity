@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Services
-{
-    using Autofac;
-    using Stubbl.Identity.Services.EmailSender;
+﻿using Autofac;
+using Stubbl.Identity.Services.EmailSender;
 
+namespace Stubbl.Identity.Services
+{
     public class ServicesModule : Module
     {
         protected override void Load(ContainerBuilder builder)

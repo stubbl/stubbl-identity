@@ -1,10 +1,10 @@
-﻿namespace Stubbl.Identity.MvcClient.Controllers
-{
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
+namespace Stubbl.Identity.MvcClient.Controllers
+{
     public class LogoutController : Controller
     {
         [Authorize]

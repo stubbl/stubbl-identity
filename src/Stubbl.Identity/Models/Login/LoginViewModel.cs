@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Models.Login
-{
-    using System.Collections.Generic;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+namespace Stubbl.Identity.Models.Login
+{
     public class LoginViewModel : LoginInputModel
     {
         public bool EnableLocalLogin { get; set; }

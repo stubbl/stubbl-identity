@@ -1,9 +1,9 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
-{
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 
+namespace CodeContrib.AspNetCore.Identity.MongoDB
+{
     internal static class UserClaimExtensions
     {
         internal static IReadOnlyCollection<IdentityUserClaim> ToUserClaims(this IEnumerable<Claim> extended)
