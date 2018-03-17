@@ -141,35 +141,36 @@ namespace Stubbl.Identity.Controllers
 
             ConsentResponse grantedConsent = null;
 
-            if (model.Button == "no")
+            switch (model.Button)
             {
-                grantedConsent = ConsentResponse.Denied;
-            }
-            else if (model.Button == "yes" && model != null)
-            {
-                if (model.ScopesConsented != null && model.ScopesConsented.Any())
-                {
-                    var scopes = model.ScopesConsented;
-
-                    if (ConsentConfig.EnableOfflineAccess == false)
+                case "no":
+                    grantedConsent = ConsentResponse.Denied;
+                    break;
+                case "yes":
+                    if (model.ScopesConsented != null && model.ScopesConsented.Any())
                     {
-                        scopes = scopes.Where(s => s != IdentityServerConstants.StandardScopes.OfflineAccess);
+                        var scopes = model.ScopesConsented;
+
+                        if (ConsentConfig.EnableOfflineAccess == false)
+                        {
+                            scopes = scopes.Where(s => s != IdentityServerConstants.StandardScopes.OfflineAccess);
+                        }
+
+                        grantedConsent = new ConsentResponse
+                        {
+                            RememberConsent = model.RememberConsent,
+                            ScopesConsented = scopes.ToArray()
+                        };
+                    }
+                    else
+                    {
+                        result.ValidationError = "You must pick at least one permission";
                     }
 
-                    grantedConsent = new ConsentResponse
-                    {
-                        RememberConsent = model.RememberConsent,
-                        ScopesConsented = scopes.ToArray()
-                    };
-                }
-                else
-                {
-                    result.ValidationError = "You must pick at least one permission";
-                }
-            }
-            else
-            {
-                result.ValidationError = "Invalid selection";
+                    break;
+                default:
+                    result.ValidationError = "Invalid selection";
+                    break;
             }
 
             if (grantedConsent != null)

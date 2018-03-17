@@ -6,7 +6,6 @@ using System.Security.Claims;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using CodeContrib.AspNetCore.Identity.MongoDB;
-using Gunnsoft.IdentityServer;
 using Gunnsoft.IdentityServer.Stores.MongoDB;
 using IdentityModel;
 using IdentityServer4.AspNetIdentity;
@@ -44,8 +43,6 @@ namespace Stubbl.Identity
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
-
         public void Configure(IApplicationBuilder app)
         {
             if (_hostingEnvironment.IsDevelopment())
@@ -58,7 +55,7 @@ namespace Stubbl.Identity
                 app.UseHsts(o => o.MaxAge(30).IncludeSubdomains());
             }
 
-            Action<IFluentCspOptions> cspo = o =>
+            void Csp(IFluentCspOptions o)
             {
                 o.DefaultSources(s => s.Self());
                 o.ImageSources(s => s.Self());
@@ -66,15 +63,15 @@ namespace Stubbl.Identity
                 o.StyleSources(s => s.Self().CustomSources("maxcdn.bootstrapcdn.com"));
 
                 o.ReportUris(r => r.Uris("/csp-report"));
-            };
+            }
 
             if (_hostingEnvironment.IsDevelopment())
             {
-                app.UseCspReportOnly(cspo);
+                app.UseCspReportOnly(Csp);
             }
             else
             {
-                app.UseCsp(cspo);
+                app.UseCsp(Csp);
             }
 
             app.UseReferrerPolicy(o => o.NoReferrer());
@@ -87,7 +84,8 @@ namespace Stubbl.Identity
                 (
                     "https://accounts.google.com",
                     "https://github.com",
-                    "https://login.microsoftonline.com"
+                    "https://login.microsoftonline.com",
+                    "http://stubblapi.127.0.0.1.xip.io"
                 );
             });
 
@@ -145,6 +143,7 @@ namespace Stubbl.Identity
 
             services.AddIdentityServer(o =>
                 {
+                    o.UserInteraction.ErrorUrl = "/error";
                     o.UserInteraction.LoginUrl = "/login";
                     o.UserInteraction.LogoutUrl = "/logout";
                 })
