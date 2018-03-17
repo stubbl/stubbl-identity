@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{93044D9C-051C-4ADC-8C23-4C0D5D11B782}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,11 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{58FF59E0-5075-4474-A9C6-948966478955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubbl.Identity", "src\Stubbl.Identity\Stubbl.Identity.csproj", "{F81C45C4-C1B8-494F-8810-7E9912977973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubbl.Identity", "src\Stubbl.Identity\Stubbl.Identity.csproj", "{F81C45C4-C1B8-494F-8810-7E9912977973}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeContrib.AspNetCore.Identity.MongoDB", "src\CodeContrib.AspNetCore.Identity.MongoDB\CodeContrib.AspNetCore.Identity.MongoDB.csproj", "{68682F8F-9D59-4DBB-90AC-51E29A37ED6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stubbl.Identity.MvcClient", "src\Stubbl.Identity.MvcClient\Stubbl.Identity.MvcClient.csproj", "{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stubbl.Identity.MvcClient", "src\Stubbl.Identity.MvcClient\Stubbl.Identity.MvcClient.csproj", "{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gunnsoft.Common", "src\Gunnsoft.Common\Gunnsoft.Common.csproj", "{44CCE75F-193E-4E34-9AC5-16B1BF4F407C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gunnsoft.AspNetCore.Identity.MongoDB", "src\Gunnsoft.AspNetCore.Identity.MongoDB\Gunnsoft.AspNetCore.Identity.MongoDB.csproj", "{65F01628-D1F5-4B7D-9459-D32540D72303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,22 +36,27 @@ Global
 		{F81C45C4-C1B8-494F-8810-7E9912977973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F81C45C4-C1B8-494F-8810-7E9912977973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F81C45C4-C1B8-494F-8810-7E9912977973}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68682F8F-9D59-4DBB-90AC-51E29A37ED6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68682F8F-9D59-4DBB-90AC-51E29A37ED6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68682F8F-9D59-4DBB-90AC-51E29A37ED6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68682F8F-9D59-4DBB-90AC-51E29A37ED6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F600B03-9DA6-4022-B6AE-8504FAC00BA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44CCE75F-193E-4E34-9AC5-16B1BF4F407C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CCE75F-193E-4E34-9AC5-16B1BF4F407C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CCE75F-193E-4E34-9AC5-16B1BF4F407C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CCE75F-193E-4E34-9AC5-16B1BF4F407C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F01628-D1F5-4B7D-9459-D32540D72303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F01628-D1F5-4B7D-9459-D32540D72303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F01628-D1F5-4B7D-9459-D32540D72303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F01628-D1F5-4B7D-9459-D32540D72303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F81C45C4-C1B8-494F-8810-7E9912977973} = {58FF59E0-5075-4474-A9C6-948966478955}
-		{68682F8F-9D59-4DBB-90AC-51E29A37ED6F} = {58FF59E0-5075-4474-A9C6-948966478955}
 		{5F600B03-9DA6-4022-B6AE-8504FAC00BA5} = {58FF59E0-5075-4474-A9C6-948966478955}
+		{44CCE75F-193E-4E34-9AC5-16B1BF4F407C} = {58FF59E0-5075-4474-A9C6-948966478955}
+		{65F01628-D1F5-4B7D-9459-D32540D72303} = {58FF59E0-5075-4474-A9C6-948966478955}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BE398171-D7C7-4355-A7D9-9ECA748F92A3}

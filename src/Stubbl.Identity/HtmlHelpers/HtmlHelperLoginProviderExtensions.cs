@@ -13,7 +13,7 @@
             { "Microsoft", "fa-windows" }
         };
 
-        public static IHtmlContent LoginProviderIcon(this IHtmlHelper htmlHelper, string loginProvider)
+        public static IHtmlContent LoginProviderIcon(this IHtmlHelper extended, string loginProvider)
         {
             if (!_loginProviderIcons.ContainsKey(loginProvider))
             {

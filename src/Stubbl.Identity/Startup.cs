@@ -240,31 +240,31 @@
 
     public static class IdentityServerBuilderExtensions
     {
-        public static IIdentityServerBuilder AddAspNetIdentity<TUser>(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddAspNetIdentity<TUser>(this IIdentityServerBuilder extended)
             where TUser : class
         {
-            builder.Services.Configure<IdentityOptions>(options =>
+            extended.Services.Configure<IdentityOptions>(options =>
             {
                 options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
                 options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
                 options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role;
             });
 
-            builder.Services.Configure<SecurityStampValidatorOptions>(opts =>
+            extended.Services.Configure<SecurityStampValidatorOptions>(opts =>
             {
                 opts.OnRefreshingPrincipal = SecurityStampValidatorCallback.UpdatePrincipal;
             });
 
-            builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, cookie =>
+            extended.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, cookie =>
             {
                 // we need to disable to allow iframe for authorize requests
                 cookie.Cookie.SameSite = SameSiteMode.None;
             });
 
-            builder.AddResourceOwnerValidator<ResourceOwnerPasswordValidator<TUser>>();
-            builder.AddProfileService<ProfileService<TUser>>();
+            extended.AddResourceOwnerValidator<ResourceOwnerPasswordValidator<TUser>>();
+            extended.AddProfileService<ProfileService<TUser>>();
 
-            return builder;
+            return extended;
         }
     }
 
