@@ -2,39 +2,36 @@
 
 @model DiagnosticsViewModel
 
+<div class="page-header">
+    <h1 class="mb-5 display-4">
+        Diagnostics
+    </h1>
+</div>
+
 <div class="row">
-    <div class="col-lg-8 offset-lg-2">
-        <div class="page-header">
-            <h1 class="mb-5 display-4">
-                Diagnostics
-            </h1>
-        </div>
-
-        <div class="row">
-            <div class="col-6">
-                <h3>Claims</h3>
-                <dl>
-                    @foreach (var claim in Model.AuthenticateResult.Principal.Claims)
-                    {
-                        <dt>@claim.Type</dt>
-                        <dd>@claim.Value</dd>
-                    }
-                </dl>
-            </div>
-            <div class="col-6">
-                <h3>Properties</h3>
-                <dl>
-                    @foreach (var prop in Model.AuthenticateResult.Properties.Items)
-                    {
-                        <dt>@prop.Key</dt>
-                        <dd>@prop.Value</dd>
-                    }
-                </dl>
-            </div>
-        </div>
-
-        @if (Model.Clients.Any())
-        {
+    <div class="col">
+        <h3>Claims</h3>
+        <dl>
+            @foreach (var claim in Model.AuthenticateResult.Principal.Claims)
+            {
+                <dt>@claim.Type</dt>
+                <dd>@claim.Value</dd>
+            }
+        </dl>
+    </div>
+    <div class="col">
+        <h3>Properties</h3>
+        <dl>
+            @foreach (var prop in Model.AuthenticateResult.Properties.Items)
+            {
+                <dt>@prop.Key</dt>
+                <dd>@prop.Value</dd>
+            }
+        </dl>
+    </div>
+    @if (Model.Clients.Any())
+    {
+        <div class="col">
             <h3>Clients</h3>
             <ul class="list-group">
                 @foreach (var client in Model.Clients)
@@ -42,6 +39,6 @@
                     <li class="list-group-item">@client</li>
                 }
             </ul>
-        }
-    </div>
+        </div>
+    }
 </div>
