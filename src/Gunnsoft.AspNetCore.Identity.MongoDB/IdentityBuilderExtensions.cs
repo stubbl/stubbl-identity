@@ -4,25 +4,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public static class IdentityBuilderExtensions
     {
-        public static IdentityBuilder AddMongoDBStores<TUser, TRole>(this IdentityBuilder extended, MongoUrl url,
+        public static IdentityBuilder AddMongoIdentity<TUser, TRole>(this IdentityBuilder extended, MongoUrl mongoUrl,
             CancellationToken cancellationToken = default(CancellationToken))
             where TRole : IdentityRole
             where TUser : IdentityUser
         {
-            MongoDBConfigurator.Configure();
+            MongoConfigurator.Configure();
 
-            var client = new MongoClient(url);
+            var client = new MongoClient(mongoUrl);
 
-            if (url.DatabaseName == null)
+            if (mongoUrl.DatabaseName == null)
             {
-                throw new ArgumentException("The connection string must contain a database name.", url.Url);
+                throw new ArgumentException("The connection string must contain a database name.", mongoUrl.Url);
             }
 
-            var database = client.GetDatabase(url.DatabaseName);
+            var database = client.GetDatabase(mongoUrl.DatabaseName);
 
             if (typeof(TUser) != extended.UserType)
             {

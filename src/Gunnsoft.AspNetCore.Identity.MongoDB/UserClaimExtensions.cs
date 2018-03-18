@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     internal static class UserClaimExtensions
     {

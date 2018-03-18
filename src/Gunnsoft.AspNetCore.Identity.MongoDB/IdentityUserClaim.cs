@@ -1,4 +1,4 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
+﻿namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public class IdentityUserClaim
     {

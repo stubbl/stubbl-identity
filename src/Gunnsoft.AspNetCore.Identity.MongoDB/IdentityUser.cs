@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using CodeContrib.AspNetCore.Identity.MongoDB.Data;
 using MongoDB.Bson;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public class IdentityUser
     {

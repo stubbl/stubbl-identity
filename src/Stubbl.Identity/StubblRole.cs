@@ -1,4 +1,4 @@
-﻿using CodeContrib.AspNetCore.Identity.MongoDB;
+﻿using Gunnsoft.AspNetCore.Identity.MongoDB;
 
 namespace Stubbl.Identity
 {

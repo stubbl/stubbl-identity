@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using MongoDB.Driver;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public static class IndexConfigurator
     {

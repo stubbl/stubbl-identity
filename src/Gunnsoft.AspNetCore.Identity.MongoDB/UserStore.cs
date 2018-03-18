@@ -4,12 +4,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using CodeContrib.AspNetCore.Identity.MongoDB.Data;
 using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     /// <summary>
     ///     Provides an abstraction for a store which manages user accounts.

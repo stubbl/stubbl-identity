@@ -1,4 +1,5 @@
 ﻿@using IdentityModel
+
 @{
     var emailAddress = User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value;
     var phoneNumber = User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.PhoneNumber)?.Value;

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public class RoleStore<TRole> : IQueryableRoleStore<TRole>
         where TRole : IdentityRole

@@ -2,19 +2,21 @@
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 
-namespace CodeContrib.AspNetCore.Identity.MongoDB
+namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
-    public static class MongoDBConfigurator
+    public static class MongoConfigurator
     {
         public static void Configure()
         {
+            const string conventionName = "gunnsoft-aspnetcore-identity-mongodb";
             var conventionPack = new ConventionPack
             {
                 new CamelCaseElementNameConvention(),
                 new EnumRepresentationConvention(BsonType.String)
             };
 
-            ConventionRegistry.Register("stubbl-identity", conventionPack, t => true);
+            ConventionRegistry.Remove(conventionName);
+            ConventionRegistry.Register(conventionName, conventionPack, t => true);
 
             if (!BsonClassMap.IsClassMapRegistered(typeof(IdentityRole)))
             {

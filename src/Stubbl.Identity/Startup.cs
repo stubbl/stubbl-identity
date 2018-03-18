@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using CodeContrib.AspNetCore.Identity.MongoDB;
+using Gunnsoft.AspNetCore.Identity.MongoDB;
 using Gunnsoft.IdentityServer.Stores.MongoDB;
 using IdentityModel;
 using IdentityServer4.AspNetIdentity;
@@ -23,6 +23,7 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
 using NWebsec.AspNetCore.Middleware;
+using Stubbl.Identity.Options;
 
 namespace Stubbl.Identity
 {
@@ -108,50 +109,7 @@ namespace Stubbl.Identity
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             var mongoConnectionString = _configuration.GetValue<string>("MongoDB:ConnectionString");
-
-            BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
-            {
-                cm.AutoMap();
-                cm.SetIgnoreExtraElements(true);
-            });
-
-            var url = new MongoUrl(mongoConnectionString);
-            var client = new MongoClient(url);
-            var database = client.GetDatabase(url.DatabaseName);
-            var persistedGrantCollection = database.GetCollection<PersistedGrant>("persistedGrants");
-
-            services.AddTransient<IPersistedGrantStore>(sp => new MongoPersistedGrantStore(persistedGrantCollection));
-
-            // ...
-
-            services.AddScoped<IUserClaimsPrincipalFactory<StubblUser>, StubblClaimsPrincipalFactory>();
-
-            services.AddIdentity<StubblUser, StubblRole>(o =>
-                {
-                    o.Password.RequireDigit = false;
-                    o.Password.RequireLowercase = false;
-                    o.Password.RequireNonAlphanumeric = false;
-                    o.Password.RequireUppercase = false;
-                    o.Password.RequiredLength = 8;
-                    o.Password.RequiredUniqueChars = 0;
-                    o.SignIn.RequireConfirmedEmail = true;
-                    o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
-                })
-                .AddErrorDescriber<StubblIdentityErrorDescriber>()
-                .AddMongoDBStores<StubblUser, StubblRole>(new MongoUrl(mongoConnectionString))
-                .AddDefaultTokenProviders();
-
-            services.AddIdentityServer(o =>
-                {
-                    o.UserInteraction.ErrorUrl = "/error";
-                    o.UserInteraction.LoginUrl = "/login";
-                    o.UserInteraction.LogoutUrl = "/logout";
-                })
-                .AddAspNetIdentity<StubblUser>()
-                .AddDeveloperSigningCredential()
-                .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
-                .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
-                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources());
+            var mongoUrl = new MongoUrl(mongoConnectionString);
 
             services.AddAuthentication()
                 // TODO AddGitHub()
@@ -227,9 +185,50 @@ namespace Stubbl.Identity
                     o.ClientSecret = clientSecret;
                 });
 
+            services.AddIdentity<StubblUser, StubblRole>(o =>
+                {
+                    o.Password.RequireDigit = false;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireNonAlphanumeric = false;
+                    o.Password.RequireUppercase = false;
+                    o.Password.RequiredLength = 8;
+                    o.Password.RequiredUniqueChars = 0;
+                    o.SignIn.RequireConfirmedEmail = true;
+                    o.Tokens.ChangePhoneNumberTokenProvider = "Phone";
+                })
+                .AddErrorDescriber<StubblIdentityErrorDescriber>()
+                .AddMongoIdentity<StubblUser, StubblRole>(mongoUrl)
+                .AddDefaultTokenProviders();
+
+            services.AddIdentityServer(o =>
+                {
+                    o.UserInteraction.ErrorUrl = "/error";
+                    o.UserInteraction.LoginUrl = "/login";
+                    o.UserInteraction.LogoutUrl = "/logout";
+                })
+                .AddAspNetIdentity<StubblUser>()
+                .AddDeveloperSigningCredential()
+                .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+                .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources());
+
             services.AddMvc();
 
+            services.AddOptions()
+                .Configure<DiagnosticsOptions>(o => _configuration.GetSection("Diagnostics").Bind(o));
+
+            services.AddScoped<IUserClaimsPrincipalFactory<StubblUser>, StubblClaimsPrincipalFactory>();
+
+            BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
+            {
+                cm.AutoMap();
+                cm.SetIgnoreExtraElements(true);
+            });
+
             var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.AddMongoPersistedGrantStore(mongoUrl);
+
             containerBuilder.RegisterInstance(_configuration)
                 .As<IConfiguration>()
                 .SingleInstance();
@@ -261,7 +260,6 @@ namespace Stubbl.Identity
 
             extended.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, cookie =>
             {
-                // we need to disable to allow iframe for authorize requests
                 cookie.Cookie.SameSite = SameSiteMode.None;
             });
 

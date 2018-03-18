@@ -1,9 +1,9 @@
-﻿namespace CodeContrib.AspNetCore.Identity.MongoDB
+﻿namespace Gunnsoft.AspNetCore.Identity.MongoDB
 {
     public static class CollectionNames
     {
-        public static string Migrations = "migrations";
-        public static string Roles = "roles";
-        public static string Users = "users";
+        public const string Migrations = "migrations";
+        public const string Roles = "roles";
+        public const string Users = "users";
     }
 }
