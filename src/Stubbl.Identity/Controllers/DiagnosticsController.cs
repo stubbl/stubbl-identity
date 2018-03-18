@@ -19,9 +19,9 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpGet("/diagnostics", Name = "Diagnostics")]
-        public async Task<IActionResult> Diagnostics(string secret)
+        public async Task<IActionResult> Diagnostics([FromQuery] string secret)
         {
-            if (_diagnosticsOptions.Secret == null && secret != _diagnosticsOptions.Secret)
+            if (_diagnosticsOptions.Secret == null || secret != _diagnosticsOptions.Secret)
             {
                 return NotFound();
             }
