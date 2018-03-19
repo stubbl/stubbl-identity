@@ -64,7 +64,7 @@ Task("Publish")
     {
         StartAndReturnProcess("dotnet", new ProcessSettings
             {
-                Arguments = $"publish src/Stubbl.Identiy --configuration {configuration} --no-build"
+                Arguments = $"publish src/Stubbl.Identiy --configuration {configuration} --no-restore"
             })
             .WaitForExit();
     });
