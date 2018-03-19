@@ -77,7 +77,7 @@ Task("Pack")
 
         var artifactFilePath = $"{artifactsDirectory}/stubbl-identity.zip";
         
-        Zip($"src/Stubbl.Identity/bin/{configuration}/netstandard2.0/publish", artifactFilePath); 
+        Zip($"src/Stubbl.Identity/bin/{configuration}/netcoreapp2.0/publish", artifactFilePath); 
         
         if (AppVeyor.IsRunningOnAppVeyor)
         {
