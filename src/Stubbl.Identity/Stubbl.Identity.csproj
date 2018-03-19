@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <TrimUnusedDependencies>true</TrimUnusedDependencies>
     <UserSecretsId>stubbl-identity-b6421f55-554b-4d13-a882-08a4f016377c</UserSecretsId>
+    <Version>0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
