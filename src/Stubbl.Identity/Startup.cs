@@ -7,15 +7,11 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Gunnsoft.AspNetCore.Identity.MongoDB;
 using Gunnsoft.IdentityServer.Stores.MongoDB;
-using IdentityModel;
-using IdentityServer4.AspNetIdentity;
 using IdentityServer4.Models;
 using IdentityServer4.Stores;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -206,7 +202,7 @@ namespace Stubbl.Identity
                     o.UserInteraction.LoginUrl = "/login";
                     o.UserInteraction.LogoutUrl = "/logout";
                 })
-                .AddAspNetIdentity<StubblUser>()
+                .AddAspNetIdentity<StubblUser, StubblClaimsPrincipalFactory>()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
@@ -216,14 +212,6 @@ namespace Stubbl.Identity
 
             services.AddOptions()
                 .Configure<DiagnosticsOptions>(o => _configuration.GetSection("Diagnostics").Bind(o));
-
-            services.AddScoped<IUserClaimsPrincipalFactory<StubblUser>, StubblClaimsPrincipalFactory>();
-
-            BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
-            {
-                cm.AutoMap();
-                cm.SetIgnoreExtraElements(true);
-            });
 
             var containerBuilder = new ContainerBuilder();
 
@@ -238,35 +226,6 @@ namespace Stubbl.Identity
             var serviceProvider = new AutofacServiceProvider(container);
 
             return serviceProvider;
-        }
-    }
-
-    public static class IdentityServerBuilderExtensions
-    {
-        public static IIdentityServerBuilder AddAspNetIdentity<TUser>(this IIdentityServerBuilder extended)
-            where TUser : class
-        {
-            extended.Services.Configure<IdentityOptions>(options =>
-            {
-                options.ClaimsIdentity.UserIdClaimType = JwtClaimTypes.Subject;
-                options.ClaimsIdentity.UserNameClaimType = JwtClaimTypes.Name;
-                options.ClaimsIdentity.RoleClaimType = JwtClaimTypes.Role;
-            });
-
-            extended.Services.Configure<SecurityStampValidatorOptions>(opts =>
-            {
-                opts.OnRefreshingPrincipal = SecurityStampValidatorCallback.UpdatePrincipal;
-            });
-
-            extended.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, cookie =>
-            {
-                cookie.Cookie.SameSite = SameSiteMode.None;
-            });
-
-            extended.AddResourceOwnerValidator<ResourceOwnerPasswordValidator<TUser>>();
-            extended.AddProfileService<ProfileService<TUser>>();
-
-            return extended;
         }
     }
 }

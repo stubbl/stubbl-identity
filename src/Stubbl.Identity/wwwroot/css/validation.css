@@ -1,0 +1,6 @@
+﻿/* Validation */
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
+    padding-left: 10px;
+}

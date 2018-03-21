@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using IdentityServer4.Models;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
 
@@ -18,6 +19,14 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
             ConventionRegistry.Remove(conventionName);
             ConventionRegistry.Register(conventionName, conventionPack, t => true);
 
+            if (!BsonClassMap.IsClassMapRegistered(typeof(PersistedGrant)))
+            {
+                BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
+                {
+                    cm.AutoMap();
+                    cm.SetIgnoreExtraElements(true);
+                });
+            }
         }
     }
 }

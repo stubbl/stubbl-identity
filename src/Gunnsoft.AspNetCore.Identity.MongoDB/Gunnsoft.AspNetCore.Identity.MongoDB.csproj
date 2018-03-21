@@ -9,4 +9,16 @@
     <PackageReference Include="MongoDB.Driver" Version="2.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="IdentityModel">
+      <HintPath>..\..\..\..\Users\hello\.nuget\packages\identitymodel\3.3.1\lib\netstandard2.0\IdentityModel.dll</HintPath>
+    </Reference>
+    <Reference Include="IdentityServer4">
+      <HintPath>..\..\..\..\Users\hello\.nuget\packages\identityserver4\2.1.1\lib\netstandard2.0\IdentityServer4.dll</HintPath>
+    </Reference>
+    <Reference Include="IdentityServer4.AspNetIdentity">
+      <HintPath>..\..\..\..\Users\hello\.nuget\packages\identityserver4.aspnetidentity\2.1.0\lib\netstandard2.0\IdentityServer4.AspNetIdentity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
