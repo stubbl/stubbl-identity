@@ -19,7 +19,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/link-external-login", Name = "LinkLogin")]
         [ValidateAntiForgeryToken]
-        public IActionResult LinkExternalLogin([FromQuery] string provider)
+        public IActionResult LinkExternalLogin([FromForm] string provider)
         {
             var redirectUrl = Url.RouteUrl("LinkLoginCallback");
 
