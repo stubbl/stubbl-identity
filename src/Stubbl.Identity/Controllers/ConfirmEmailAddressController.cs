@@ -13,7 +13,7 @@ namespace Stubbl.Identity.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("/confirm-email-address", Name = "ConfirmEmailAddress")]
+        [HttpGet("/confirm-email-address/{userId}", Name = "ConfirmEmailAddress")]
         public async Task<IActionResult> ConfirmEmailAddress([FromRoute] string userId, [FromQuery] string token, [FromQuery] string returnUrl)
         {
             if (userId == null || token == null)

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.RegisterConfirmation;
-using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
 {
