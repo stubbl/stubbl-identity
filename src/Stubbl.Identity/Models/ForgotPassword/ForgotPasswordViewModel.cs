@@ -2,6 +2,11 @@
 {
     public class ForgotPasswordViewModel : ForgotPasswordInputModel
     {
-        public string ReturnUrl { get; set; }
+        public ForgotPasswordViewModel(string returnUrl)
+        {
+            ReturnUrl = returnUrl;
+        }
+
+        public string ReturnUrl { get; }
     }
 }

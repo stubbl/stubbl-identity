@@ -2,7 +2,13 @@
 {
     public class ConfirmEmailAddressConfirmationViewModel
     {
-        public string EmailAddress { get; set; }
-        public string ReturnUrl { get; set; }
+        public ConfirmEmailAddressConfirmationViewModel(string emailAddress, string returnUrl)
+        {
+            EmailAddress = emailAddress;
+            ReturnUrl = returnUrl;
+        }
+
+        public string EmailAddress { get; }
+        public string ReturnUrl { get; }
     }
 }

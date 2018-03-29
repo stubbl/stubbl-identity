@@ -35,17 +35,19 @@ namespace Stubbl.Identity.Controllers
             string loginProvider, string returnUrl)
         {
             return new ExternalLoginCallbackViewModel
+            (
+                loginProvider,
+                returnUrl
+            )
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 EmailAddress = model.EmailAddress,
-                LoginProvider = loginProvider,
-                ReturnUrl = returnUrl
             };
         }
 
         [HttpGet("/external-login-callback", Name = "ExternalLoginCallback")]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
+        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl, [FromQuery] string remoteError)
         {
             if (remoteError != null)
             {
@@ -54,7 +56,7 @@ namespace Stubbl.Identity.Controllers
                 return RedirectToRoute("Login");
             }
 
-            var authenticateResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
 
             var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -79,14 +81,23 @@ namespace Stubbl.Identity.Controllers
 
                 if (signInResult.IsNotAllowed)
                 {
-                    // TODO NotAllowed
-                    return RedirectToRoute("NotAllowed");
+                    if (signInResult.IsNotAllowed)
+                    {
+                        var user = await _userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
+
+                        if (_signInManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
+                        {
+                            return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                        }
+                    }
+
+                    return View("Error");
                 }
 
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new {returnUrl});
+                    return RedirectToRoute("LoginTwoFactor", new { returnUrl });
                 }
 
                 var emailAddress = loginInfo.Principal.FindFirstValue(ClaimTypes.Email);
@@ -94,8 +105,8 @@ namespace Stubbl.Identity.Controllers
 
                 var model = new ExternalLoginCallbackInputModel
                 {
-                    FirstName = name.First(),
-                    LastName = name.Length > 1 ? name.Last() : null,
+                    FirstName = name?.First(),
+                    LastName = name?.Length > 1 ? name.Last() : null,
                     EmailAddress = emailAddress
                 };
 
@@ -118,15 +129,14 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/external-login-callback", Name = "ExternalLoginCallback")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalLoginCallback(ExternalLoginCallbackInputModel model, string returnUrl,
-            bool isEmailAddressConfirmed)
+        public async Task<IActionResult> ExternalLoginCallback([FromForm] ExternalLoginCallbackInputModel model,
+            [FromQuery] string returnUrl, [FromQuery] bool isEmailAddressConfirmed)
         {
             var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
             if (loginInfo == null)
             {
-                // TODO Custom exception.
-                throw new ApplicationException("Error loading external login information during callback confirmation");
+                return View("Error");
             }
 
             if (!ModelState.IsValid)
@@ -148,7 +158,7 @@ namespace Stubbl.Identity.Controllers
             var user = new StubblUser
             {
                 EmailAddress = model.EmailAddress,
-                EmailAddressConfirmed = true,
+                EmailAddressConfirmed = isEmailAddressConfirmed,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Username = model.EmailAddress
@@ -185,10 +195,10 @@ namespace Stubbl.Identity.Controllers
             if (!isEmailAddressConfirmed)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
+                var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token, returnUrl },
                     Request.Scheme);
 
-                var subject = "Stubbl: Please confirm your email address";
+                const string subject = "Stubbl: Please confirm your email address";
                 var message =
                     $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 
@@ -196,7 +206,7 @@ namespace Stubbl.Identity.Controllers
 
                 if (_signInManager.Options.SignIn.RequireConfirmedEmail)
                 {
-                    return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
+                    return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
                 }
             }
 

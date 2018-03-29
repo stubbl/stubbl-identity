@@ -6,7 +6,7 @@
     <div class="col-lg-8 offset-lg-2">
         <div class="page-header">
             <h2 class="mb-5 display-4">
-                Sign in
+                Log in
             </h2>
         </div>
 
@@ -15,14 +15,14 @@
             {
                 <div class="col-md-5 mb-4">
                     <section>
-                        <form asp-route="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                        <form asp-route="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                             <div>
                                 @foreach (var loginProvider in Model.LoginProviders)
                                 {
-                                    <button type="submit" class="btn btn-lg btn-default btn-block btn-@loginProvider.ToLower()" name="provider" value="@loginProvider" title="Log in using your @loginProvider account">
-                                        @Html.LoginProviderIcon(loginProvider)
+                                    <button type="submit" class="btn btn-lg btn-default btn-block btn-@loginProvider.Name.ToLower()" name="provider" value="@loginProvider.Name" title="Log in using your @loginProvider.DisplayName account">
+                                        @Html.LoginProviderIcon(loginProvider.Name)
 
-                                        @loginProvider
+                                        @loginProvider.DisplayName
                                     </button>
                                 }
                             </div>
@@ -31,7 +31,7 @@
                 </div>
             }
 
-            @if (Model.EnableLocalLogin)
+            @if (Model.AllowLocalLogin)
             {
                 <div class="col-md-5 offset-md-2">
                     <section>
@@ -57,7 +57,7 @@
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
+                                <button type="submit" class="btn btn-primary btn-lg btn-block">Log in</button>
                             </div>
 
                             <div class="form-group">
@@ -68,11 +68,11 @@
                 </div>
             }
 
-            @if (!Model.EnableLocalLogin && !Model.LoginProviders.Any())
+            @if (!Model.AllowLocalLogin && !Model.LoginProviders.Any())
             {
-                <p class="alert alert-warning">
+                <div class="alert alert-warning">
                     There are no login schemes configured for this client.
-                </p>
+                </div>
             }
         </div>
     </div>

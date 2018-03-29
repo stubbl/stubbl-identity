@@ -18,7 +18,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/resend-email-address-confirmation/{userId}", Name = "ResendEmailAddressConfirmation")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResendConfirmationEmail(string userId, string returnUrl)
+        public async Task<IActionResult> ResendConfirmationEmail([FromRoute] string userId, [FromQuery] string returnUrl)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
@@ -31,13 +31,13 @@ namespace Stubbl.Identity.Controllers
             var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
                 Request.Scheme);
 
-            var subject = "Stubbl: Please confirm your email address";
+            const string subject = "Stubbl: Please confirm your email address";
             var message =
                 $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 
             await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
 
-            return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
+            return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, confirmationSent = true, returnUrl});
         }
     }
 }

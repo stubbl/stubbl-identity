@@ -2,8 +2,18 @@
 {
     public class RegisterConfirmationViewModel
     {
-        public string EmailAddress { get; set; }
-        public string ReturnUrl { get; set; }
-        public string UserId { get; set; }
+        public RegisterConfirmationViewModel(string emailAddress, string userId, bool allowResendConfirmation,
+            string returnUrl)
+        {
+            EmailAddress = emailAddress;
+            UserId = userId;
+            AllowResendConfirmation = allowResendConfirmation;
+            ReturnUrl = returnUrl;
+        }
+
+        public bool AllowResendConfirmation { get; }
+        public string EmailAddress { get; }
+        public string ReturnUrl { get; }
+        public string UserId { get; }
     }
 }

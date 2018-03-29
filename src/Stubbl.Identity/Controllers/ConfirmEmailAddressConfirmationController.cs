@@ -6,13 +6,13 @@ namespace Stubbl.Identity.Controllers
     public class ConfirmEmailAddressConfirmationController : Controller
     {
         [HttpGet("/confirm-email-address-confirmation", Name = "ConfirmEmailAddressConfirmation")]
-        public IActionResult ConfirmEmailAddressConfirmation(string emailAddress, string returnUrl)
+        public IActionResult ConfirmEmailAddressConfirmation([FromQuery] string emailAddress, [FromQuery] string returnUrl)
         {
             var viewModel = new ConfirmEmailAddressConfirmationViewModel
-            {
-                EmailAddress = emailAddress,
-                ReturnUrl = returnUrl
-            };
+            (
+                emailAddress,
+                returnUrl
+            );
 
             return View(viewModel);
         }

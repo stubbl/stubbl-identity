@@ -8,17 +8,15 @@ namespace Stubbl.Identity.Controllers
 {
     public class RegisterConfirmationController : Controller
     {
-        private readonly IEmailSender _emailSender;
         private readonly UserManager<StubblUser> _userManager;
 
-        public RegisterConfirmationController(IEmailSender emailSender, UserManager<StubblUser> userManager)
+        public RegisterConfirmationController(UserManager<StubblUser> userManager)
         {
-            _emailSender = emailSender;
             _userManager = userManager;
         }
 
         [HttpGet("/register-confirmation/{userId}", Name = "RegisterConfirmation")]
-        public async Task<IActionResult> RegisterConfirmation(string userId, string returnUrl)
+        public async Task<IActionResult> RegisterConfirmation([FromRoute] string userId, [FromQuery] bool confirmationSent, [FromQuery] string returnUrl)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
@@ -28,11 +26,12 @@ namespace Stubbl.Identity.Controllers
             }
 
             var viewModel = new RegisterConfirmationViewModel
-            {
-                EmailAddress = user.EmailAddress,
-                ReturnUrl = returnUrl,
-                UserId = userId
-            };
+            (
+                user.EmailAddress,
+                userId,
+                !confirmationSent,
+                returnUrl
+            );
 
             return View(viewModel);
         }

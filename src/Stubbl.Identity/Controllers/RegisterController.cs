@@ -28,16 +28,18 @@ namespace Stubbl.Identity.Controllers
             RegisterInputModel inputModel = null)
         {
             return new RegisterViewModel
+            (
+                returnUrl
+            )
             {
                 EmailAddress = emailAddress ?? inputModel?.EmailAddress,
                 Password = inputModel?.Password,
-                ReturnUrl = returnUrl
             };
         }
 
         [HttpGet("/register", Name = "Register")]
         [AllowAnonymous]
-        public IActionResult Register(string returnUrl, string emailAddress)
+        public IActionResult Register([FromQuery] string emailAddress, [FromQuery] string returnUrl)
         {
             ModelState.Clear();
 
@@ -49,7 +51,7 @@ namespace Stubbl.Identity.Controllers
         [HttpPost("/register", Name = "Register")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterInputModel model, string returnUrl)
+        public async Task<IActionResult> Register([FromForm] RegisterInputModel model, [FromQuery] string returnUrl)
         {
             RegisterViewModel viewModel;
 
@@ -62,7 +64,7 @@ namespace Stubbl.Identity.Controllers
 
             if (await _userManager.FindByEmailAsync(model.EmailAddress) != null)
             {
-                ModelState.AddModelError(nameof(model.EmailAddress), $"This email address has already been registered");
+                ModelState.AddModelError(nameof(model.EmailAddress), "This email address has already been registered");
 
                 viewModel = BuildRegisterViewModel(returnUrl);
 
@@ -81,10 +83,7 @@ namespace Stubbl.Identity.Controllers
 
             if (!identityResult.Succeeded)
             {
-                foreach (var error in identityResult.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                ModelState.AddModelError("", "Error registering user");
 
                 viewModel = BuildRegisterViewModel(returnUrl);
 
@@ -95,7 +94,7 @@ namespace Stubbl.Identity.Controllers
             var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
                 Request.Scheme);
 
-            var subject = "Stubbl: Please confirm your email address";
+            const string subject = "Stubbl: Please confirm your email address";
             var message =
                 $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
 

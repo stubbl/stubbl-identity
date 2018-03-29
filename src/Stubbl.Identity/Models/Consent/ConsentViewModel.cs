@@ -4,11 +4,23 @@ namespace Stubbl.Identity.Models.Consent
 {
     public class ConsentViewModel : ConsentInputModel
     {
-        public bool AllowRememberConsent { get; set; }
-        public string ClientName { get; set; }
-        public string ClientLogoUrl { get; set; }
-        public string ClientUrl { get; set; }
-        public IReadOnlyCollection<Scope> IdentityScopes { get; set; }
-        public IReadOnlyCollection<Scope> ResourceScopes { get; set; }
+        public ConsentViewModel(string clientName, string clientUrl, string clientLogoUrl, 
+            IReadOnlyCollection<Scope> identityScopes, IReadOnlyCollection<Scope> resourceScopes,
+            bool allowRememberConsent)
+        {
+            ClientName = clientName;
+            ClientUrl = clientUrl;
+            ClientLogoUrl = clientLogoUrl;
+            IdentityScopes = identityScopes;
+            ResourceScopes = resourceScopes;
+            AllowRememberConsent = allowRememberConsent;
+        }
+
+        public bool AllowRememberConsent { get; }
+        public string ClientName { get; }
+        public string ClientLogoUrl { get; }
+        public string ClientUrl { get; }
+        public IReadOnlyCollection<Scope> IdentityScopes { get; }
+        public IReadOnlyCollection<Scope> ResourceScopes { get; }
     }
 }

@@ -34,7 +34,6 @@ namespace Stubbl.Identity.Controllers
             string returnUrl, string emailAddress = null)
         {
             var loginProviders = (await _signInManager.GetExternalAuthenticationSchemesAsync())
-                .Select(x => x.Name)
                 .ToList();
 
             var allowLocalLogin = true;
@@ -49,17 +48,19 @@ namespace Stubbl.Identity.Controllers
 
                     if (client.IdentityProviderRestrictions != null && client.IdentityProviderRestrictions.Any())
                     {
-                        loginProviders = loginProviders.Where(lp => client.IdentityProviderRestrictions.Contains(lp))
+                        loginProviders = loginProviders.Where(lp => client.IdentityProviderRestrictions.Contains(lp.Name))
                             .ToList();
                     }
                 }
             }
 
             return new LoginViewModel
+            (
+                loginProviders.ToList(),
+                allowLocalLogin
+            )
             {
-                EnableLocalLogin = allowLocalLogin,
                 EmailAddress = emailAddress ?? authorizationContext?.LoginHint,
-                LoginProviders = loginProviders.ToArray(),
                 ReturnUrl = returnUrl
             };
         }
@@ -77,7 +78,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpGet]
         [Route("/login", Name = "Login")]
-        public async Task<IActionResult> Login(string returnUrl, string emailAddress)
+        public async Task<IActionResult> Login([FromQuery] string emailAddress, [FromQuery] string returnUrl)
         {
             ModelState.Clear();
 
@@ -89,7 +90,7 @@ namespace Stubbl.Identity.Controllers
                 && (await _signInManager.GetExternalAuthenticationSchemesAsync()).Any(p =>
                     string.Equals(p.Name, authorizationContext.IdP, StringComparison.InvariantCultureIgnoreCase)))
             {
-                var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new {returnUrl});
+                var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new { returnUrl });
                 var properties =
                     _signInManager.ConfigureExternalAuthenticationProperties(authorizationContext.IdP, redirectUrl);
 
@@ -102,7 +103,7 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpPost("/login", Name = "Login")]
-        public async Task<IActionResult> Login(LoginInputModel model, string returnUrl)
+        public async Task<IActionResult> Login([FromForm] LoginInputModel model, [FromQuery] string returnUrl)
         {
             LoginViewModel viewModel;
 
@@ -126,21 +127,20 @@ namespace Stubbl.Identity.Controllers
 
                 if (signInResult.IsNotAllowed)
                 {
-                    if (_signInManager.Options.SignIn.RequireConfirmedEmail)
-                    {
-                        var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+                    var user = await _userManager.FindByEmailAsync(model.EmailAddress);
 
-                        if (!await _userManager.IsEmailConfirmedAsync(user))
-                        {
-                            return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
-                        }
+                    if (_signInManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
                     }
+
+                    return View("Error");
                 }
 
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new {returnUrl, rememberMe = model.RememberMe});
+                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = model.RememberMe });
                 }
 
                 ModelState.AddModelError("", "The email address and/or password is incorrect");

@@ -2,6 +2,11 @@
 {
     public class ResetPasswordViewModel : ResetPasswordInputModel
     {
-        public string ReturnUrl { get; set; }
+        public ResetPasswordViewModel(string returnUrl)
+        {
+            ReturnUrl = returnUrl;
+        }
+
+        public string ReturnUrl { get; }
     }
 }

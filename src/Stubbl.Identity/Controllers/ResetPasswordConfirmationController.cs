@@ -6,13 +6,13 @@ namespace Stubbl.Identity.Controllers
     public class ResetPasswordConfirmationController : Controller
     {
         [HttpGet("/reset-password-confirmation", Name = "ResetPasswordConfirmation")]
-        public IActionResult ResetPasswordConfirmation(string emailAddress, string returnUrl)
+        public IActionResult ResetPasswordConfirmation([FromQuery] string emailAddress, [FromQuery] string returnUrl)
         {
             var viewModel = new ResetPasswordConfirmationViewModel
-            {
-                EmailAddress = emailAddress,
-                ReturnUrl = returnUrl
-            };
+            (
+                emailAddress,
+                returnUrl
+            );
 
             return View(viewModel);
         }

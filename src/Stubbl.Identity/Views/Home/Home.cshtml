@@ -1,9 +1,6 @@
-﻿@using IdentityModel
+﻿@using Stubbl.Identity.Models.Home
 
-@{
-    var emailAddress = User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value;
-    var phoneNumber = User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.PhoneNumber)?.Value;
-}
+@model HomeViewModel
 
 <div class="row">
     <div class="col-md-8 offset-md-2">
@@ -15,31 +12,37 @@
 
         <div class="row">
             <div class="col-md-6">
-                <img class="rounded-circle" asp-gravatar-emailaddress="@User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Email)?.Value" asp-gravatar-size="200"/>
+                <img class="rounded-circle" asp-gravatar-emailaddress="@Model.EmailAddress" asp-gravatar-size="200" />
             </div>
             <div class="col-md-6">
-                <h3 class="mb-0">
-                    @User.Claims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name)?.Value
+                <h3>
+                    @Model.FirstName @Model.LastName
                 </h3>
-                @*<a asp-route="EditName"><small>Edit name</small></a>*@
 
-                @if (!string.IsNullOrWhiteSpace(emailAddress))
-                {
-                    <h5 class="mt-4 mb-0">
-                        <i class="fa fa-envelope"></i>
-                        @emailAddress
-                    </h5>
-                    @*<a asp-route="EditEmailAddress"><small>Edit email address</small></a>*@
-                }
+                <div>
+                    <i class="fa fa-envelope"></i> @Model.EmailAddress
+                </div>
 
-                @if (!string.IsNullOrWhiteSpace(phoneNumber))
-                {
-                    <h5 class="mt-4 mb-0">
-                        <i class="fa fa-phone"></i>
-                        @phoneNumber
-                    </h5>
-                    @*<a asp-route="EditPhoneNumber"><small>Edit phone number</small></a>*@
-                }
+                <hr />
+
+                <div>
+                    <a asp-route="ChangeEmailAddress">Change Email Address</a>
+                </div>
+
+                <div>
+                    @if (Model.HasPassword)
+                    {
+                        <a asp-route="ChangePassword">Change Password</a>
+                    }
+                    else
+                    {
+                        <a asp-route="AddPassword">Add Password</a>
+                    }
+                </div>
+
+                <div>
+                    <a asp-route="ManageExternalLogins">Manage External Logins (@Model.LoginsCount)</a>
+                </div>
             </div>
         </div>
     </div>

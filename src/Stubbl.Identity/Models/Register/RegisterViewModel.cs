@@ -2,6 +2,11 @@
 {
     public class RegisterViewModel : RegisterInputModel
     {
-        public string ReturnUrl { get; set; }
+        public RegisterViewModel(string returnUrl)
+        {
+            ReturnUrl = returnUrl;
+        }
+
+        public string ReturnUrl { get; }
     }
 }

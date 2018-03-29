@@ -1,0 +1,56 @@
+﻿@using Stubbl.Identity.Models.ManageExternalLogins
+
+@model ManageExternalLoginsViewModel
+
+@if (Model.CurrentLogins.Count > 0)
+{
+    <h4>Current External Logins</h4>
+
+    <table class="table">
+        <tbody>
+            @foreach (var currentLogin in Model.CurrentLogins)
+            {
+                <tr>
+                    <td>@currentLogin.LoginProvider</td>
+                    <td>
+                        @if (Model.AllowRemoval)
+                        {
+                            <form method="post">
+                                <div>
+                                    <input asp-for="@currentLogin.LoginProvider" name="LoginProvider" type="hidden" />
+                                    <input asp-for="@currentLogin.ProviderKey" name="ProviderKey" type="hidden" />
+                                    <input type="submit" class="btn btn-default" value="Remove" title="Remove this @currentLogin.LoginProvider login from your account" />
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            @: &nbsp;
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@if (Model.OtherLogins.Count > 0)
+{
+    <h4>Add another external provider</h4>
+    <hr />
+    <form method="post">
+        <div id="socialLoginList">
+            <p>
+                @foreach (var otherLogin in Model.OtherLogins)
+                {
+                    <button type="submit" class="btn btn-default" name="provider" value="@otherLogin.Name" title="Log in using your @otherLogin.DisplayName account">@otherLogin.DisplayName</button>
+                                                                                                                                                                                            
+                    <button type="submit" class="btn btn-lg btn-default btn-block btn-@otherLogin.Name.ToLower()" name="provider" value="@otherLogin.Name" title="Log in using your @otherLogin.DisplayName account">
+                        @Html.LoginProviderIcon(otherLogin.Name)
+
+                        @otherLogin.DisplayName
+                    </button>
+                }
+            </p>
+        </div>
+    </form>
+}

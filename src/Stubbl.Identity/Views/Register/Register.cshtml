@@ -10,19 +10,21 @@
             </h1>
         </div>
 
+        @Html.Partial("_ValidationSummary")
+
         <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label asp-for="FirstName">First name</label>
-                        <input type="text" asp-for="FirstName" class="form-control"/>
+                        <input type="text" asp-for="FirstName" class="form-control" />
                         <span asp-validation-for="FirstName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label asp-for="LastName">Last name</label>
-                        <input type="text" asp-for="LastName" class="form-control"/>
+                        <input type="text" asp-for="LastName" class="form-control" />
                         <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                 </div>
@@ -30,24 +32,24 @@
 
             <div class="form-group">
                 <label asp-for="EmailAddress">Email address</label>
-                <input type="email" asp-for="EmailAddress" class="form-control"/>
+                <input type="email" asp-for="EmailAddress" class="form-control" />
                 <span asp-validation-for="EmailAddress" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Password">Password</label>
-                <input type="password" asp-for="Password" class="form-control"/>
+                <input type="password" asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group mt-4">
-                <button type="submit" class="btn btn-lg btn-primary btn-block">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
                     Register
                 </button>
             </div>
 
             <div class="form-group">
-                Already registered? <a asp-route="Login" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Sign in</a>
+                Already registered? <a asp-route="Login" asp-route-returnUrl="@Model.ReturnUrl" data-append="#@Html.IdFor(m => m.EmailAddress)">Log in</a>
             </div>
         </form>
     </div>

@@ -29,59 +29,67 @@ namespace Stubbl.Identity.Controllers
             _resourceStore = resourceStore;
         }
 
-        private ConsentViewModel BuildConsentViewModel(ConsentInputModel model, string returnUrl,
-            AuthorizationRequest request, Client client, Resources resources)
+        private ConsentViewModel BuildConsentViewModel(ConsentInputModel model, Client client,
+            Resources resources, string returnUrl)
         {
-            var viewModel = new ConsentViewModel
-            {
-                AllowRememberConsent = client.AllowRememberConsent,
-                ClientLogoUrl = client.LogoUri,
-                ClientName = client.ClientName ?? client.ClientId,
-                ClientUrl = client.ClientUri,
-                RememberConsent = model?.RememberConsent ?? true,
-                ReturnUrl = returnUrl,
-                ScopesConsented = model?.ScopesConsented ?? new string[0]
-            };
+            var scopesConsented = (model?.ScopesConsented ?? new string[0]).ToList();
 
-            viewModel.IdentityScopes = resources.IdentityResources.Select(ir =>
-                    new Scope
-                    {
-                        Checked = viewModel.ScopesConsented.Contains(ir.Name) || model == null || ir.Required,
-                        Description = ir.Description,
-                        DisplayName = ir.DisplayName,
-                        Emphasize = ir.Emphasize,
-                        Name = ir.Name,
-                        Required = ir.Required
-                    })
+            var identityScopes = resources.IdentityResources.Select(ir =>
+                new Scope
+                (
+                    ir.Name,
+                    ir.DisplayName,
+                    ir.Description,
+                    scopesConsented.Contains(ir.Name) || model == null || ir.Required,
+                    ir.Emphasize,
+                    ir.Required
+                ))
                 .ToList();
-            viewModel.ResourceScopes = resources.ApiResources.SelectMany(ar => ar.Scopes).Select(s =>
-                    new Scope
-                    {
-                        Checked = viewModel.ScopesConsented.Contains(s.Name) || model == null || s.Required,
-                        Description = s.Description,
-                        DisplayName = s.DisplayName,
-                        Emphasize = s.Emphasize,
-                        Name = s.Name,
-                        Required = s.Required
-                    })
+
+            var resourceScopes = resources.ApiResources.SelectMany(ar => ar.Scopes).Select(s =>
+                new Scope
+                (
+                    s.Name,
+                    s.DisplayName,
+                    s.Description,
+                    scopesConsented.Contains(s.Name) || model == null || s.Required,
+                    s.Emphasize,
+                    s.Required
+                ))
                 .ToList();
 
             if (ConsentConfig.EnableOfflineAccess && resources.OfflineAccess)
             {
-                viewModel.ResourceScopes = viewModel.ResourceScopes.Union(new[]
+                resourceScopes = resourceScopes.Union(new[]
                     {
                         new Scope
-                        {
-                            Checked = viewModel.ScopesConsented.Contains(IdentityServerConstants.StandardScopes
-                                          .OfflineAccess) || model == null,
-                            Description = "Access to your applications and resources, even when you are offline",
-                            DisplayName = "Offline access",
-                            Name = IdentityServerConstants.StandardScopes.OfflineAccess,
-                            Emphasize = true
-                        }
+                        (
+                            IdentityServerConstants.StandardScopes.OfflineAccess,
+                            "Offline access",
+                            "Access to your applications and resources, even when you are offline",
+                            scopesConsented.Contains(IdentityServerConstants.StandardScopes.OfflineAccess) || model == null,
+                            true,
+                            false
+                        )
                     })
                     .ToList();
             }
+
+            var viewModel = new ConsentViewModel
+            (
+                client.ClientName ?? client.ClientId,
+                client.ClientUri,
+                client.LogoUri,
+                identityScopes,
+                resourceScopes,
+                client.AllowRememberConsent
+            )
+            {
+                RememberConsent = model?.RememberConsent ?? true,
+                ReturnUrl = returnUrl,
+                ScopesConsented = scopesConsented
+            };
+
 
             return viewModel;
         }
@@ -101,7 +109,13 @@ namespace Stubbl.Identity.Controllers
 
                     if (resources != null && (resources.IdentityResources.Any() || resources.ApiResources.Any()))
                     {
-                        return BuildConsentViewModel(model, returnUrl, request, client, resources);
+                        return BuildConsentViewModel
+                        (
+                            model,
+                            client,
+                            resources,
+                            returnUrl
+                        );
                     }
 
                     _logger.LogError("No scopes matching: {0}",
@@ -121,7 +135,7 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpGet("/consent", Name = "Consent")]
-        public async Task<IActionResult> Consent(string returnUrl)
+        public async Task<IActionResult> Consent([FromQuery] string returnUrl)
         {
             var viewModel = await BuildConsentViewModelAsync(returnUrl);
 
@@ -135,42 +149,39 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/consent", Name = "Consent")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Consent(ConsentInputModel model)
+        public async Task<IActionResult> Consent([FromForm] ConsentInputModel model)
         {
-            var result = new ProcessConsentResult();
-
             ConsentResponse grantedConsent = null;
 
-            switch (model.Button)
+            string returnUrl = null;
+            string validationError = null;
+            ConsentViewModel viewModel = null;
+
+            if (model.GrantConsent)
             {
-                case "no":
-                    grantedConsent = ConsentResponse.Denied;
-                    break;
-                case "yes":
-                    if (model.ScopesConsented != null && model.ScopesConsented.Any())
-                    {
-                        var scopes = model.ScopesConsented;
+                if (model.ScopesConsented != null && model.ScopesConsented.Any())
+                {
+                    var scopes = model.ScopesConsented;
 
-                        if (ConsentConfig.EnableOfflineAccess == false)
-                        {
-                            scopes = scopes.Where(s => s != IdentityServerConstants.StandardScopes.OfflineAccess);
-                        }
-
-                        grantedConsent = new ConsentResponse
-                        {
-                            RememberConsent = model.RememberConsent,
-                            ScopesConsented = scopes.ToArray()
-                        };
-                    }
-                    else
+                    if (ConsentConfig.EnableOfflineAccess == false)
                     {
-                        result.ValidationError = "You must pick at least one permission";
+                        scopes = scopes.Where(s => s != IdentityServerConstants.StandardScopes.OfflineAccess);
                     }
 
-                    break;
-                default:
-                    result.ValidationError = "Invalid selection";
-                    break;
+                    grantedConsent = new ConsentResponse
+                    {
+                        RememberConsent = model.RememberConsent,
+                        ScopesConsented = scopes.ToList()
+                    };
+                }
+                else
+                {
+                    validationError = "You must pick at least one permission";
+                }
+            }
+            else
+            {
+                grantedConsent = ConsentResponse.Denied;
             }
 
             if (grantedConsent != null)
@@ -181,31 +192,30 @@ namespace Stubbl.Identity.Controllers
                 {
                     await _interactionService.GrantConsentAsync(authorizationRequest, grantedConsent);
 
-                    result.RedirectUri = model.ReturnUrl;
+                    returnUrl = model.ReturnUrl;
                 }
             }
             else
             {
-                result.ViewModel = await BuildConsentViewModelAsync(model.ReturnUrl, model);
+                viewModel = await BuildConsentViewModelAsync(model.ReturnUrl, model);
             }
 
-            if (result.HasValidationError)
+            if (viewModel != null)
             {
-                ModelState.AddModelError("", result.ValidationError);
+                if (validationError != null)
+                {
+                    ModelState.AddModelError("", "Error granting consent");
+                }
+
+                return View("Consent", viewModel);
             }
 
-            if (result.ShowView)
+            if (returnUrl != null)
             {
-                return View("Consent", result.ViewModel);
+                return Redirect(returnUrl);
             }
 
-            if (result.IsRedirect)
-            {
-                return Redirect(result.RedirectUri);
-            }
-
-            // TODO Custom exception.
-            throw new Exception();
+            return View("Error");
         }
     }
 }

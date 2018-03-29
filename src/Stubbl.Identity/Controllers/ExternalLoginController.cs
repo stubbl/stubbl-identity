@@ -14,7 +14,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/external-login", Name = "ExternalLogin")]
         [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin(string provider, string returnUrl)
+        public IActionResult ExternalLogin([FromQuery] string provider, [FromQuery] string returnUrl)
         {
             var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new {returnUrl});
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);

@@ -17,20 +17,20 @@
         @if (Model.PostLogoutRedirectUri != null)
         {
             <div>
-                Click <a class="PostLogoutRedirectUri" href="@Model.PostLogoutRedirectUri">here</a> to return to <span>@Model.ClientName</span>.
+                Click <a href="@Model.PostLogoutRedirectUri">here</a> to return to <span>@Model.ClientName</span>.
             </div>
         }
 
-        @if (Model.SignOutIframeUrl != null)
+        @if (Model.LogoutIframeUrl != null)
         {
-            <iframe width="0" height="0" class="signout" src="@Model.SignOutIframeUrl"></iframe>
+            <iframe width="0" height="0" src="@Model.LogoutIframeUrl"></iframe>
         }
     </div>
 </div>
 
 @section Scripts
 {
-    @if (Model.AutomaticRedirectAfterSignOut)
+    @if (Model.AutomaticRedirectAfterLogout)
     {
         <script>
             window.addEventListener("load",

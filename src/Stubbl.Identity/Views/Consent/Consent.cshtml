@@ -19,7 +19,7 @@
 
     @Html.Partial("_ValidationSummary")
 
-    <form asp-route="Consent">
+    <form method="post">
         <input type="hidden" asp-for="ReturnUrl"/>
 
         <p class="lead">Uncheck the permissions you do not wish to grant.</p>
@@ -76,10 +76,10 @@
 
                     <div class="row">
                         <div class="col">
-                            <button name="button" value="yes" class="btn btn-lg btn-primary btn-block" autofocus>Allow</button>
+                            <button name="@Html.NameFor(m => m.GrantConsent)" value="true" class="btn btn-primary btn-lg btn-block" autofocus>Allow</button>
                         </div>
                         <div class="col">
-                            <button name="button" value="no" class="btn btn-lg btn-secondary btn-block">Deny</button>
+                            <button name="@Html.NameFor(m => m.GrantConsent)" value="false" class="btn btn-lg btn-secondary btn-block">Deny</button>
                         </div>
                     </div>
                 </div>

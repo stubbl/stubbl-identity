@@ -2,7 +2,13 @@
 {
     public class ExternalLoginViewModel : ExternalLoginInputModel
     {
-        public string LoginProvider { get; set; }
-        public string ReturnUrl { get; set; }
+        public ExternalLoginViewModel(string loginProvider, string returnUrl)
+        {
+            LoginProvider = loginProvider;
+            ReturnUrl = returnUrl;
+        }
+
+        public string LoginProvider { get; }
+        public string ReturnUrl { get; }
     }
 }

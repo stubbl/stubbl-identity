@@ -20,9 +20,11 @@ namespace Stubbl.Identity.Controllers
         private ForgotPasswordViewModel BuildForgotPasswordViewModel(string returnUrl, string emailAddress = null)
         {
             return new ForgotPasswordViewModel
+            (
+                returnUrl
+            )
             {
-                EmailAddress = emailAddress,
-                ReturnUrl = returnUrl
+                EmailAddress = emailAddress
             };
         }
 
@@ -38,7 +40,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/forgot-password", Name = "ForgotPassword")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordInputModel model, string returnUrl)
+        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordInputModel model, [FromQuery] string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -57,7 +59,7 @@ namespace Stubbl.Identity.Controllers
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.RouteUrl("ResetPassword", new {code, returnUrl}, Request.Scheme);
 
-            var subject = "Reset Password";
+            const string subject = "Reset Password";
             var message =
                 $"Reset your password by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>";
 

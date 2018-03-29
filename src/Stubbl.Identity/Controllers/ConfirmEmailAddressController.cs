@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +14,7 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpGet("/confirm-email-address", Name = "ConfirmEmailAddress")]
-        public async Task<IActionResult> ConfirmEmailAddress(string userId, string token, string returnUrl)
+        public async Task<IActionResult> ConfirmEmailAddress([FromRoute] string userId, [FromQuery] string token, [FromQuery] string returnUrl)
         {
             if (userId == null || token == null)
             {
@@ -26,8 +25,7 @@ namespace Stubbl.Identity.Controllers
 
             if (user == null)
             {
-                // TODO Custom exception.
-                throw new ApplicationException($"Unable to load user with ID \"{userId}\".");
+                return View("Error");
             }
 
             if (!await _userManager.IsEmailConfirmedAsync(user))
@@ -36,12 +34,11 @@ namespace Stubbl.Identity.Controllers
 
                 if (!identityResult.Succeeded)
                 {
-                    // TODO Custom exception.
-                    throw new ApplicationException($"Unable to confirm email address for user with ID \"{userId}\".");
+                    return View("Error");
                 }
             }
 
-            return RedirectToRoute("ConfirmEmailAddressConfirmation", new {user.EmailAddress, returnUrl});
+            return RedirectToRoute("ConfirmEmailAddressConfirmation", new { user.EmailAddress, returnUrl });
         }
     }
 }

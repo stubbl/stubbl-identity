@@ -2,12 +2,22 @@
 {
     public class LoggedOutViewModel
     {
-        public bool AutomaticRedirectAfterSignOut { get; set; }
-        public string ClientName { get; set; }
-        public string LoginProvider { get; set; }
-        public string LogoutId { get; set; }
-        public string PostLogoutRedirectUri { get; set; }
-        public string SignOutIframeUrl { get; set; }
-        public bool TriggerExternalSignout => LoginProvider != null;
+        public LoggedOutViewModel(string clientName, string logoutId, string logoutIframeUrl,
+            bool automaticRedirectAfterLogout, string postLogoutRedirectUri, string externalLoginProvider)
+        {
+            ClientName = clientName;
+            LogoutId = logoutId;
+            LogoutIframeUrl = logoutIframeUrl;
+            AutomaticRedirectAfterLogout = automaticRedirectAfterLogout;
+            PostLogoutRedirectUri = postLogoutRedirectUri;
+            ExternalLoginProvider = externalLoginProvider;
+        }
+
+        public bool AutomaticRedirectAfterLogout { get; }
+        public string ClientName { get; }
+        public string ExternalLoginProvider { get; }
+        public string LogoutId { get; }
+        public string LogoutIframeUrl { get; }
+        public string PostLogoutRedirectUri { get; }
     }
 }

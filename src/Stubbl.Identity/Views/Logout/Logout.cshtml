@@ -10,15 +10,15 @@
             </h1>
         </div>
 
-        <p class="lead">Would you like to sign out of Stubbl?</p>
+        <p class="lead">Would you like to log out of Stubbl?</p>
 
-        <form asp-route="Logout">
+        <form method="post">
             <input type="hidden" asp-for="LogoutId" value="@Model.LogoutId"/>
 
             <div class="form-group">
                 <div class="row">
                     <div class="col">
-                        <button class="btn btn-lg btn-primary btn-block">Yes</button>
+                        <button class="btn btn-primary btn-lg btn-block">Yes</button>
                     </div>
                     <div class="col">
                         <a href="javascript:history.back()" class="btn btn-lg btn-secondary btn-block">No</a>

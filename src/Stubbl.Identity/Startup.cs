@@ -58,8 +58,6 @@ namespace Stubbl.Identity
                 o.ImageSources(s => s.Self());
                 o.FontSources(s => s.Self().CustomSources("data:")); // TODO Remove the `data:` source
                 o.StyleSources(s => s.Self().CustomSources("maxcdn.bootstrapcdn.com"));
-
-                o.ReportUris(r => r.Uris("/csp-report"));
             }
 
             if (_hostingEnvironment.IsDevelopment())

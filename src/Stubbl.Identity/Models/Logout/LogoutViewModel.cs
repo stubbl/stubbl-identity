@@ -2,6 +2,11 @@
 {
     public class LogoutViewModel : LogoutInputModel
     {
-        public bool ShowLogoutPrompt { get; set; }
+        public LogoutViewModel(bool showLogoutPrompt)
+        {
+            ShowLogoutPrompt = showLogoutPrompt;
+        }
+
+        public bool ShowLogoutPrompt { get; }
     }
 }

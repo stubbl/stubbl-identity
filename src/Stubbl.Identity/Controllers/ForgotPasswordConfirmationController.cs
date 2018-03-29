@@ -1,28 +1,17 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.ForgotPasswordConfirmation;
-using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
 {
     public class ForgotPasswordConfirmationController : Controller
     {
-        private readonly IEmailSender _emailSender;
-        private readonly UserManager<StubblUser> _userManager;
-
-        public ForgotPasswordConfirmationController(IEmailSender emailSender, UserManager<StubblUser> userManager)
-        {
-            _emailSender = emailSender;
-            _userManager = userManager;
-        }
-
         [HttpGet("/forgot-password-confirmation", Name = "ForgotPasswordConfirmation")]
-        public IActionResult ForgotPasswordConfirmation(string returnUrl)
+        public IActionResult ForgotPasswordConfirmation([FromQuery] string returnUrl)
         {
             var viewModel = new ForgotPasswordConfirmationViewModel
-            {
-                ReturnUrl = returnUrl
-            };
+            (
+                returnUrl
+            );
 
             return View(viewModel);
         }

@@ -2,7 +2,11 @@
 {
     public class ForgotPasswordConfirmationViewModel
     {
-        public string EmailAddress { get; set; }
-        public string ReturnUrl { get; set; }
+        public ForgotPasswordConfirmationViewModel(string returnUrl)
+        {
+            ReturnUrl = returnUrl;
+        }
+
+        public string ReturnUrl { get; }
     }
 }
