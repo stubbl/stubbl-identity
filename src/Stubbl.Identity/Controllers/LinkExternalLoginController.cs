@@ -17,15 +17,15 @@ namespace Stubbl.Identity.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost("/link-external-login", Name = "LinkLogin")]
+        [HttpPost("/link-external-login", Name = "LinkExternalLogin")]
         [ValidateAntiForgeryToken]
-        public IActionResult LinkExternalLogin([FromForm] string provider)
+        public IActionResult LinkExternalLogin([FromForm] string loginProvider)
         {
-            var redirectUrl = Url.RouteUrl("LinkLoginCallback");
+            var redirectUrl = Url.RouteUrl("LinkExternalLoginCallback");
 
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl, _userManager.GetUserId(User));
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(loginProvider, redirectUrl, _userManager.GetUserId(User));
 
-            return Challenge(properties, provider);
+            return Challenge(properties, loginProvider);
         }
     }
 }

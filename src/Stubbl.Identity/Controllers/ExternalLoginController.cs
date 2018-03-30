@@ -14,12 +14,12 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/external-login", Name = "ExternalLogin")]
         [ValidateAntiForgeryToken]
-        public IActionResult ExternalLogin([FromForm] string provider, [FromQuery] string returnUrl)
+        public IActionResult ExternalLogin([FromForm] string loginProvider, [FromQuery] string returnUrl)
         {
             var redirectUrl = Url.RouteUrl("ExternalLoginCallback", new {returnUrl});
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(loginProvider, redirectUrl);
 
-            return Challenge(properties, provider);
+            return Challenge(properties, loginProvider);
         }
     }
 }

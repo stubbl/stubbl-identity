@@ -21,8 +21,8 @@ namespace Stubbl.Identity.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("/link-external-login-callback", Name = "LinkLoginCallback")]
-        public async Task<ActionResult> LinkExternalSLoginCallback()
+        [HttpGet("/link-external-login-callback", Name = "LinkExternalLoginCallback")]
+        public async Task<ActionResult> LinkExternalLoginCallback()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
@@ -35,9 +35,7 @@ namespace Stubbl.Identity.Controllers
 
             if (loginInfo == null)
             {
-                _logger.LogWarning("Error loading external login information during callback");
-
-                return RedirectToRoute("ManageLogins");
+                return View("Error");
             }
 
             var result = await _userManager.AddLoginAsync(user, loginInfo);
@@ -47,7 +45,7 @@ namespace Stubbl.Identity.Controllers
                 return View("Error");
             }
 
-            return RedirectToRoute("ManageLogins");
+            return RedirectToRoute("ManageExternalLogins");
         }
     }
 }

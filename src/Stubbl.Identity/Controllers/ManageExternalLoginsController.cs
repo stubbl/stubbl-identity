@@ -20,7 +20,7 @@ namespace Stubbl.Identity.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("/manage-logins", Name = "ManageExternalLogins")]
+        [HttpGet("/manage-external-logins", Name = "ManageExternalLogins")]
         public async Task<IActionResult> ManageExternalLogins()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);

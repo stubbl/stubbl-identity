@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
@@ -80,6 +81,11 @@ namespace Stubbl.Identity.Controllers
         [Route("/login", Name = "Login")]
         public async Task<IActionResult> Login([FromQuery] string emailAddress, [FromQuery] string returnUrl)
         {
+            if (User.IsAuthenticated())
+            {
+                return RedirectToRoute("Home");
+            }
+
             ModelState.Clear();
 
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -121,7 +127,6 @@ namespace Stubbl.Identity.Controllers
             {
                 if (signInResult.IsLockedOut)
                 {
-                    // TODO LockedOut
                     return RedirectToRoute("LockedOut");
                 }
 

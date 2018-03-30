@@ -51,9 +51,7 @@ namespace Stubbl.Identity.Controllers
         {
             if (remoteError != null)
             {
-                _logger.LogWarning("Login provider returned with message {remoteError}", remoteError);
-
-                return RedirectToRoute("Login");
+                return View("Error");
             }
 
             await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
@@ -62,9 +60,7 @@ namespace Stubbl.Identity.Controllers
 
             if (loginInfo == null)
             {
-                _logger.LogWarning("Error loading external login information during callback");
-
-                return RedirectToRoute("Login");
+                return View("Error");
             }
 
             var signInResult =
@@ -75,7 +71,6 @@ namespace Stubbl.Identity.Controllers
             {
                 if (signInResult.IsLockedOut)
                 {
-                    // TODO LockedOut
                     return RedirectToRoute("LockedOut");
                 }
 

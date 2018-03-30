@@ -7,17 +7,17 @@
 }
 
 <div class="row">
-    <div class="col-md-6 offset-md-3">
+    <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
         <div class="page-header">
             <h1 class="mb-5 display-4">
-                You are now signed out
+                You are now logged out
             </h1>
         </div>
 
         @if (Model.PostLogoutRedirectUri != null)
         {
             <div>
-                Click <a href="@Model.PostLogoutRedirectUri">here</a> to return to <span>@Model.ClientName</span>.
+                Click <a href="@Model.PostLogoutRedirectUri"><em>here</em></a> to return to <span>@Model.ClientName</span>.
             </div>
         }
 
@@ -30,16 +30,12 @@
 
 @section Scripts
 {
-    @if (Model.AutomaticRedirectAfterLogout)
+    @if (Model.AutomaticRedirectAfterLogout && Model.PostLogoutRedirectUri != null)
     {
         <script>
             window.addEventListener("load",
                 function() {
-                    var a = document.querySelector("a.PostLogoutRedirectUri");
-
-                    if (a) {
-                        window.location = a.href;
-                    }
+                    window.location = '@Model.PostLogoutRedirectUri';
                 });
         </script>
     }

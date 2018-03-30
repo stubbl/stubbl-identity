@@ -19,10 +19,8 @@
                             <div>
                                 @foreach (var loginProvider in Model.LoginProviders)
                                 {
-                                    <button type="submit" class="btn btn-lg btn-default btn-block btn-@loginProvider.Name.ToLower()" name="provider" value="@loginProvider.Name" title="Log in using your @loginProvider.DisplayName account">
-                                        @Html.LoginProviderIcon(loginProvider.Name)
-
-                                        @loginProvider.DisplayName
+                                    <button type="submit" class="btn btn-lg btn-block btn-@loginProvider.Name.ToLower()" name="LoginProvider" value="@loginProvider.Name" title="Log in using your @loginProvider.DisplayName account">
+                                        @Html.LoginProviderIcon(loginProvider.Name) @loginProvider.DisplayName
                                     </button>
                                 }
                             </div>
