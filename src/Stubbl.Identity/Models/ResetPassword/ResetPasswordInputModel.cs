@@ -10,7 +10,7 @@ namespace Stubbl.Identity.Models.ResetPassword
         [EmailAddress(ErrorMessage = "Please enter a valid email address")]
         public string EmailAddress { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter a password")]
         [RegularExpression(".{8,}", ErrorMessage = "The password must be at least 8 characters long")]
         public string Password { get; set; }
     }

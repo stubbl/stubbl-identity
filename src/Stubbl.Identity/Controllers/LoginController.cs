@@ -136,7 +136,7 @@ namespace Stubbl.Identity.Controllers
 
                     if (_signInManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
                     {
-                        return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                        return RedirectToRoute("EmailAddressConfirmationSent", new { userId = user.Id, returnUrl });
                     }
 
                     return View("Error");

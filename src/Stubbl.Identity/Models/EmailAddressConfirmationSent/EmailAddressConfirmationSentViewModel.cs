@@ -1,8 +1,8 @@
-﻿namespace Stubbl.Identity.Models.RegisterConfirmation
+﻿namespace Stubbl.Identity.Models.EmailAddressConfirmationSent
 {
-    public class RegisterConfirmationViewModel
+    public class EmailAddressConfirmationSentViewModel
     {
-        public RegisterConfirmationViewModel(string emailAddress, string userId, bool allowResendConfirmation,
+        public EmailAddressConfirmationSentViewModel(string emailAddress, string userId, bool allowResendConfirmation,
             string returnUrl)
         {
             EmailAddress = emailAddress;

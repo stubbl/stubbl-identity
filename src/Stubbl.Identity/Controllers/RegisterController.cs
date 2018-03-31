@@ -79,15 +79,11 @@ namespace Stubbl.Identity.Controllers
                 Username = model.EmailAddress
             };
 
-            var identityResult = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (!identityResult.Succeeded)
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Error registering user");
-
-                viewModel = BuildRegisterViewModel(returnUrl);
-
-                return View(viewModel);
+                return View("Error");
             }
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -102,7 +98,7 @@ namespace Stubbl.Identity.Controllers
 
             if (_signInManager.Options.SignIn.RequireConfirmedEmail)
             {
-                return RedirectToRoute("RegisterConfirmation", new {userId = user.Id, returnUrl});
+                return RedirectToRoute("EmailAddressConfirmationSent", new {userId = user.Id, returnUrl});
             }
 
             await _signInManager.SignInAsync(user, false);

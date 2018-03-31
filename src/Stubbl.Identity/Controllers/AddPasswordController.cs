@@ -62,14 +62,12 @@ namespace Stubbl.Identity.Controllers
 
             if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Error adding password");
-
-                return View(inputModel);
-            }
+                return View("Error");
+;            }
 
             await _signInManager.SignInAsync(user, false);
 
-            return RedirectToRoute("Home", new { Message = "Your password has been added." });
+            return RedirectToRoute("Home");
         }
     }
 }

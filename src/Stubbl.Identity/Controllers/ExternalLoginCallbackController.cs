@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
@@ -82,7 +81,7 @@ namespace Stubbl.Identity.Controllers
 
                         if (_signInManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
                         {
-                            return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                            return RedirectToRoute("EmailAddressConfirmationSent", new { userId = user.Id, returnUrl });
                         }
                     }
 
@@ -159,32 +158,20 @@ namespace Stubbl.Identity.Controllers
                 Username = model.EmailAddress
             };
 
-            var identityResult = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user);
 
-            if (!identityResult.Succeeded)
+            if (!result.Succeeded)
             {
-                _logger.LogError("Error creating user. @{IdentityResult}", identityResult);
-
-                ModelState.AddModelError("", "Error creating user");
-
-                var viewModel = BuildExternalLoginCallbackViewModel(model, loginInfo.LoginProvider, returnUrl);
-
-                return View(viewModel);
+                return View("Error");
             }
 
-            identityResult = await _userManager.AddLoginAsync(user, loginInfo);
+            result = await _userManager.AddLoginAsync(user, loginInfo);
 
-            if (!identityResult.Succeeded)
+            if (!result.Succeeded)
             {
-                _logger.LogError("Error adding login to user. @{IdentityResult}", identityResult);
-
                 await _userManager.DeleteAsync(user);
 
-                ModelState.AddModelError("", "Error adding login to user");
-
-                var viewModel = BuildExternalLoginCallbackViewModel(model, loginInfo.LoginProvider, returnUrl);
-
-                return View(viewModel);
+                return View("Error");
             }
 
             if (!isEmailAddressConfirmed)
@@ -201,8 +188,10 @@ namespace Stubbl.Identity.Controllers
 
                 if (_signInManager.Options.SignIn.RequireConfirmedEmail)
                 {
-                    return RedirectToRoute("RegisterConfirmation", new { userId = user.Id, returnUrl });
+                    return RedirectToRoute("EmailAddressConfirmationSent", new { userId = user.Id, returnUrl });
                 }
+
+                return View("Error");
             }
 
             await _signInManager.SignInAsync(user, false);

@@ -17,7 +17,7 @@
                 function() {
                     var uri = new URI(this.href);
                     uri.removeSearch(key)
-                        .addSearch(key.charAt(0).toUpperCase() + key.slice(1), value);
+                        .addSearch(key.charAt(0).toLowerCase() + key.slice(1), value);
 
                     return uri.href();
                 });

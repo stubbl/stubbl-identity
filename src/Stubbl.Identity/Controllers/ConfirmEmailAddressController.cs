@@ -30,9 +30,21 @@ namespace Stubbl.Identity.Controllers
 
             if (!await _userManager.IsEmailConfirmedAsync(user))
             {
-                var identityResult = await _userManager.ConfirmEmailAsync(user, token);
+                var result = await _userManager.ConfirmEmailAsync(user, token);
 
-                if (!identityResult.Succeeded)
+                if (!result.Succeeded)
+                {
+                    return View("Error");
+                }
+            }
+            else if (user.NewEmailAddress != null)
+            {
+                user.EmailAddress = user.NewEmailAddress;
+                user.NewEmailAddress = null;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
                 {
                     return View("Error");
                 }

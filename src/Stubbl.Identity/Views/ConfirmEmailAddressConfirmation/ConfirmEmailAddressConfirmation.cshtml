@@ -1,4 +1,5 @@
-﻿@using Stubbl.Identity.Models.ConfirmEmailAddressConfirmation
+﻿@using IdentityServer4.Extensions
+@using Stubbl.Identity.Models.ConfirmEmailAddressConfirmation
 
 @model ConfirmEmailAddressConfirmationViewModel
 
@@ -10,7 +11,14 @@
             </h1>
 
             <p class="lead">
-                You can now <a asp-route="Login" asp-route-emailAddress="@Model.EmailAddress" asp-route-returnUrl="@Model.ReturnUrl">log in</a>.
+                @if (User.IsAuthenticated())
+                {
+                    <text>Your email address has been changed.</text>
+                }
+                else
+                {
+                    <text>You can now <a asp-route="Login" asp-route-emailAddress="@Model.EmailAddress" asp-route-returnUrl="@Model.ReturnUrl">log in</a>.</text>
+                }
             </p>
         </div>
     </div>

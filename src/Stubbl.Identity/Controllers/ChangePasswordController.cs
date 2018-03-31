@@ -62,9 +62,7 @@ namespace Stubbl.Identity.Controllers
 
             if (!result.Succeeded)
             {
-                ModelState.AddModelError("", "Error changing password");
-
-                return View(inputModel);
+                return View("Error");
             }
 
             await _signInManager.SignInAsync(user, false);

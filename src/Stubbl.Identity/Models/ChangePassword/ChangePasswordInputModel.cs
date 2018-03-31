@@ -4,11 +4,11 @@ namespace Stubbl.Identity.Models.ChangePassword
 {
     public class ChangePasswordInputModel
     {
-        [Required]
+        [Required(ErrorMessage = "Please enter your current password")]
         public string CurrentPassword { get; set; }
 
-        [Required]
-        [RegularExpression(".{8,}", ErrorMessage = "The password must be at least 8 characters long")]
+        [Required(ErrorMessage = "Please enter your new password")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
         public string NewPassword { get; set; }
     }
 }
