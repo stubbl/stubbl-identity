@@ -51,7 +51,7 @@ namespace Stubbl.Identity.Controllers
         [HttpPost("/register", Name = "Register")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([FromForm] RegisterInputModel model, [FromQuery] string returnUrl)
+        public async Task<IActionResult> Register([FromForm] RegisterInputModel inputModel, [FromQuery] string returnUrl)
         {
             RegisterViewModel viewModel;
 
@@ -62,9 +62,9 @@ namespace Stubbl.Identity.Controllers
                 return View(viewModel);
             }
 
-            if (await _userManager.FindByEmailAsync(model.EmailAddress) != null)
+            if (await _userManager.FindByEmailAsync(inputModel.EmailAddress) != null)
             {
-                ModelState.AddModelError(nameof(model.EmailAddress), "This email address has already been registered");
+                ModelState.AddModelError(nameof(inputModel.EmailAddress), "This email address has already been registered");
 
                 viewModel = BuildRegisterViewModel(returnUrl);
 
@@ -73,13 +73,13 @@ namespace Stubbl.Identity.Controllers
 
             var user = new StubblUser
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                EmailAddress = model.EmailAddress,
-                Username = model.EmailAddress
+                FirstName = inputModel.FirstName,
+                LastName = inputModel.LastName,
+                EmailAddress = inputModel.EmailAddress,
+                Username = inputModel.EmailAddress
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, inputModel.Password);
 
             if (!result.Succeeded)
             {

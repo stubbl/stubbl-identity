@@ -26,22 +26,22 @@
                 <hr />
 
                 <div>
-                    <a asp-route="ChangeEmailAddress">Change Email Address</a>
+                    <a asp-route="ChangeEmailAddress">Change email address</a>
                 </div>
 
                 <div>
                     @if (Model.HasPassword)
                     {
-                        <a asp-route="ChangePassword">Change Password</a>
+                        <a asp-route="ChangePassword">Change password</a>
                     }
                     else
                     {
-                        <a asp-route="AddPassword">Add Password</a>
+                        <a asp-route="AddPassword">Add password</a>
                     }
                 </div>
 
                 <div>
-                    <a asp-route="ManageExternalLogins">Manage External Logins (@Model.LoginsCount)</a>
+                    <a asp-route="ManageExternalLogins">Manage external logins (@Model.LoginsCount)</a>
                 </div>
             </div>
         </div>

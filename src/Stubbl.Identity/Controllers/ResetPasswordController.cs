@@ -41,33 +41,33 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/reset-password", Name = "ResetPassword")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordInputModel model, [FromQuery] string returnUrl)
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordInputModel inputModel, [FromQuery] string returnUrl)
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = BuildResetPasswordViewModel(model.Code, returnUrl);
+                var viewModel = BuildResetPasswordViewModel(inputModel.Code, returnUrl);
 
                 return View(viewModel);
             }
 
-            var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+            var user = await _userManager.FindByEmailAsync(inputModel.EmailAddress);
 
             if (user == null)
             {
-                ModelState.AddModelError(nameof(model.EmailAddress), "Please check the email address");
+                ModelState.AddModelError(nameof(inputModel.EmailAddress), "Please check the email address");
 
-                var viewModel = BuildResetPasswordViewModel(model.Code, returnUrl);
+                var viewModel = BuildResetPasswordViewModel(inputModel.Code, returnUrl);
 
                 return View(viewModel);
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            var result = await _userManager.ResetPasswordAsync(user, inputModel.Code, inputModel.Password);
 
             if (!result.Succeeded)
             {
-                ModelState.AddModelError(nameof(model.EmailAddress), "Please check the email address");
+                ModelState.AddModelError(nameof(inputModel.EmailAddress), "Please check the email address");
 
-                var viewModel = BuildResetPasswordViewModel(model.Code, returnUrl);
+                var viewModel = BuildResetPasswordViewModel(inputModel.Code, returnUrl);
 
                 return View(viewModel);
             }

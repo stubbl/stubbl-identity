@@ -105,9 +105,9 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/logout", Name = "Logout")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout([FromForm] LogoutInputModel model)
+        public async Task<IActionResult> Logout([FromForm] LogoutInputModel inputModel)
         {
-            var viewModel = await BuildLoggedOutViewModelAsync(model.LogoutId);
+            var viewModel = await BuildLoggedOutViewModelAsync(inputModel.LogoutId);
 
             await _signInManager.SignOutAsync();
 

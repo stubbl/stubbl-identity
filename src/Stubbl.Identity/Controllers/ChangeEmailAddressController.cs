@@ -68,6 +68,13 @@ namespace Stubbl.Identity.Controllers
                 return RedirectToRoute("Home");
             }
 
+            if (await _userManager.FindByEmailAsync(inputModel.EmailAddress) != null)
+            {
+                ModelState.AddModelError(nameof(inputModel.EmailAddress), "This email address has already been registered");
+
+                return View(inputModel);
+            }
+
             user.NewEmailAddress = inputModel.EmailAddress;
 
             var result = await _userManager.UpdateAsync(user);

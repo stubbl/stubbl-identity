@@ -149,7 +149,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/consent", Name = "Consent")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Consent([FromForm] ConsentInputModel model)
+        public async Task<IActionResult> Consent([FromForm] ConsentInputModel inputModel)
         {
             ConsentResponse grantedConsent = null;
 
@@ -157,11 +157,11 @@ namespace Stubbl.Identity.Controllers
             string validationError = null;
             ConsentViewModel viewModel = null;
 
-            if (model.GrantConsent)
+            if (inputModel.GrantConsent)
             {
-                if (model.ScopesConsented != null && model.ScopesConsented.Any())
+                if (inputModel.ScopesConsented != null && inputModel.ScopesConsented.Any())
                 {
-                    var scopes = model.ScopesConsented;
+                    var scopes = inputModel.ScopesConsented;
 
                     if (ConsentConfig.EnableOfflineAccess == false)
                     {
@@ -170,7 +170,7 @@ namespace Stubbl.Identity.Controllers
 
                     grantedConsent = new ConsentResponse
                     {
-                        RememberConsent = model.RememberConsent,
+                        RememberConsent = inputModel.RememberConsent,
                         ScopesConsented = scopes.ToList()
                     };
                 }
@@ -186,18 +186,18 @@ namespace Stubbl.Identity.Controllers
 
             if (grantedConsent != null)
             {
-                var authorizationRequest = await _interactionService.GetAuthorizationContextAsync(model.ReturnUrl);
+                var authorizationRequest = await _interactionService.GetAuthorizationContextAsync(inputModel.ReturnUrl);
 
                 if (authorizationRequest != null)
                 {
                     await _interactionService.GrantConsentAsync(authorizationRequest, grantedConsent);
 
-                    returnUrl = model.ReturnUrl;
+                    returnUrl = inputModel.ReturnUrl;
                 }
             }
             else
             {
-                viewModel = await BuildConsentViewModelAsync(model.ReturnUrl, model);
+                viewModel = await BuildConsentViewModelAsync(inputModel.ReturnUrl, inputModel);
             }
 
             if (viewModel != null)

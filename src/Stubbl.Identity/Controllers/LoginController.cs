@@ -66,13 +66,13 @@ namespace Stubbl.Identity.Controllers
             };
         }
 
-        public async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel model)
+        public async Task<LoginViewModel> BuildLoginViewModelAsync(LoginInputModel inputModel)
         {
-            var authorizationContext = await _interactionService.GetAuthorizationContextAsync(model.ReturnUrl);
+            var authorizationContext = await _interactionService.GetAuthorizationContextAsync(inputModel.ReturnUrl);
 
-            var viewModel = await BuildLoginViewModelAsync(authorizationContext, model.ReturnUrl);
-            viewModel.EmailAddress = model.EmailAddress;
-            viewModel.RememberMe = model.RememberMe;
+            var viewModel = await BuildLoginViewModelAsync(authorizationContext, inputModel.ReturnUrl);
+            viewModel.EmailAddress = inputModel.EmailAddress;
+            viewModel.RememberMe = inputModel.RememberMe;
 
             return viewModel;
         }
@@ -109,19 +109,19 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpPost("/login", Name = "Login")]
-        public async Task<IActionResult> Login([FromForm] LoginInputModel model, [FromQuery] string returnUrl)
+        public async Task<IActionResult> Login([FromForm] LoginInputModel inputModel, [FromQuery] string returnUrl)
         {
             LoginViewModel viewModel;
 
             if (!ModelState.IsValid)
             {
-                viewModel = await BuildLoginViewModelAsync(model);
+                viewModel = await BuildLoginViewModelAsync(inputModel);
 
                 return View(viewModel);
             }
 
             var signInResult =
-                await _signInManager.PasswordSignInAsync(model.EmailAddress, model.Password, model.RememberMe, true);
+                await _signInManager.PasswordSignInAsync(inputModel.EmailAddress, inputModel.Password, inputModel.RememberMe, true);
 
             if (!signInResult.Succeeded)
             {
@@ -132,7 +132,7 @@ namespace Stubbl.Identity.Controllers
 
                 if (signInResult.IsNotAllowed)
                 {
-                    var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+                    var user = await _userManager.FindByEmailAsync(inputModel.EmailAddress);
 
                     if (_signInManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
                     {
@@ -145,12 +145,12 @@ namespace Stubbl.Identity.Controllers
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = model.RememberMe });
+                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = inputModel.RememberMe });
                 }
 
                 ModelState.AddModelError("", "The email address and/or password is incorrect");
 
-                viewModel = await BuildLoginViewModelAsync(model);
+                viewModel = await BuildLoginViewModelAsync(inputModel);
 
                 return View(viewModel);
             }

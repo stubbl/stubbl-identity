@@ -15,22 +15,20 @@ namespace Stubbl.Identity.Controllers
     {
         private readonly IEmailSender _emailSender;
         private readonly IIdentityServerInteractionService _interactionService;
-        private readonly ILogger<ExternalLoginCallbackController> _logger;
         private readonly SignInManager<StubblUser> _signInManager;
         private readonly UserManager<StubblUser> _userManager;
 
         public ExternalLoginCallbackController(IEmailSender emailSender,
-            IIdentityServerInteractionService interactionService, ILogger<ExternalLoginCallbackController> logger,
-            SignInManager<StubblUser> signInManager, UserManager<StubblUser> userManager)
+            IIdentityServerInteractionService interactionService, SignInManager<StubblUser> signInManager,
+            UserManager<StubblUser> userManager)
         {
             _emailSender = emailSender;
             _interactionService = interactionService;
-            _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
         }
 
-        public ExternalLoginCallbackViewModel BuildExternalLoginCallbackViewModel(ExternalLoginCallbackInputModel model,
+        public ExternalLoginCallbackViewModel BuildExternalLoginCallbackViewModel(ExternalLoginCallbackInputModel inputModel,
             string loginProvider, string returnUrl)
         {
             return new ExternalLoginCallbackViewModel
@@ -39,9 +37,9 @@ namespace Stubbl.Identity.Controllers
                 returnUrl
             )
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                EmailAddress = model.EmailAddress,
+                FirstName = inputModel.FirstName,
+                LastName = inputModel.LastName,
+                EmailAddress = inputModel.EmailAddress,
             };
         }
 
@@ -123,7 +121,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/external-login-callback", Name = "ExternalLoginCallback")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExternalLoginCallback([FromForm] ExternalLoginCallbackInputModel model,
+        public async Task<IActionResult> ExternalLoginCallback([FromForm] ExternalLoginCallbackInputModel inputModel,
             [FromQuery] string returnUrl, [FromQuery] bool isEmailAddressConfirmed)
         {
             var loginInfo = await _signInManager.GetExternalLoginInfoAsync();
@@ -135,27 +133,27 @@ namespace Stubbl.Identity.Controllers
 
             if (!ModelState.IsValid)
             {
-                var viewModel = BuildExternalLoginCallbackViewModel(model, loginInfo.LoginProvider, returnUrl);
+                var viewModel = BuildExternalLoginCallbackViewModel(inputModel, loginInfo.LoginProvider, returnUrl);
 
                 return View(viewModel);
             }
 
-            if (await _userManager.FindByEmailAsync(model.EmailAddress) != null)
+            if (await _userManager.FindByEmailAsync(inputModel.EmailAddress) != null)
             {
-                ModelState.AddModelError(nameof(model.EmailAddress), "This email address has already been registered");
+                ModelState.AddModelError(nameof(inputModel.EmailAddress), "This email address has already been registered");
 
-                var viewModel = BuildExternalLoginCallbackViewModel(model, loginInfo.LoginProvider, returnUrl);
+                var viewModel = BuildExternalLoginCallbackViewModel(inputModel, loginInfo.LoginProvider, returnUrl);
 
                 return View(viewModel);
             }
 
             var user = new StubblUser
             {
-                EmailAddress = model.EmailAddress,
+                EmailAddress = inputModel.EmailAddress,
                 EmailAddressConfirmed = isEmailAddressConfirmed,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Username = model.EmailAddress
+                FirstName = inputModel.FirstName,
+                LastName = inputModel.LastName,
+                Username = inputModel.EmailAddress
             };
 
             var result = await _userManager.CreateAsync(user);

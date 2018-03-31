@@ -40,7 +40,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/forgot-password", Name = "ForgotPassword")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordInputModel model, [FromQuery] string returnUrl)
+        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordInputModel inputModel, [FromQuery] string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -49,7 +49,7 @@ namespace Stubbl.Identity.Controllers
                 return View(viewModel);
             }
 
-            var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+            var user = await _userManager.FindByEmailAsync(inputModel.EmailAddress);
 
             if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
             {
@@ -63,7 +63,7 @@ namespace Stubbl.Identity.Controllers
             var message =
                 $"Reset your password by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>";
 
-            await _emailSender.SendEmailAsync(model.EmailAddress, subject, message);
+            await _emailSender.SendEmailAsync(inputModel.EmailAddress, subject, message);
 
             return RedirectToRoute("ForgotPasswordConfirmation", new {returnUrl});
         }
