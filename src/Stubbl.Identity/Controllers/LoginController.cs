@@ -145,7 +145,9 @@ namespace Stubbl.Identity.Controllers
                 if (signInResult.RequiresTwoFactor)
                 {
                     // TODO LoginTwoFactor
-                    return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = inputModel.RememberMe });
+
+                    return View("Error");
+                    //return RedirectToRoute("LoginTwoFactor", new { returnUrl, rememberMe = inputModel.RememberMe });
                 }
 
                 ModelState.AddModelError("", "The email address and/or password is incorrect");

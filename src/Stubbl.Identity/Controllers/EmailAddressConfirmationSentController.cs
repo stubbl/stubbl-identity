@@ -15,7 +15,7 @@ namespace Stubbl.Identity.Controllers
         }
 
         [HttpGet("/email-address-confirmation-sent/{userId}", Name = "EmailAddressConfirmationSent")]
-        public async Task<IActionResult> EmailAddressConfirmationSent([FromRoute] string userId, [FromQuery] bool confirmationSent, [FromQuery] string returnUrl)
+        public async Task<IActionResult> EmailAddressConfirmationSent([FromRoute] string userId, [FromQuery] bool resent, [FromQuery] string returnUrl)
         {
             var user = await _userManager.FindByIdAsync(userId);
 
@@ -28,7 +28,7 @@ namespace Stubbl.Identity.Controllers
             (
                 user.NewEmailAddress ?? user.EmailAddress,
                 userId,
-                !confirmationSent,
+                !resent,
                 returnUrl
             );
 

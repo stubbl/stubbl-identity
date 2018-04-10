@@ -31,14 +31,14 @@ namespace Stubbl.Identity.Controllers
                 return View("Error");
             }
 
-            var loginInfo = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
+            var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync(await _userManager.GetUserIdAsync(user));
 
-            if (loginInfo == null)
+            if (externalLoginInfo == null)
             {
                 return View("Error");
             }
 
-            var result = await _userManager.AddLoginAsync(user, loginInfo);
+            var result = await _userManager.AddLoginAsync(user, externalLoginInfo);
 
             if (!result.Succeeded)
             {

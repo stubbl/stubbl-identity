@@ -37,7 +37,7 @@ namespace Stubbl.Identity.Controllers
 
             await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
 
-            return RedirectToRoute("EmailAddressConfirmationSent", new {userId = user.Id, confirmationSent = true, returnUrl});
+            return RedirectToRoute("EmailAddressConfirmationSent", new {userId = user.Id, resent = true, returnUrl});
         }
     }
 }

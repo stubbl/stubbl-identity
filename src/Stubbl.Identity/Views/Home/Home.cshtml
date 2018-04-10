@@ -3,7 +3,7 @@
 @model HomeViewModel
 
 <div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="col-12 col-lg-8 offset-lg-2">
         <div class="page-header">
             <h2 class="mb-5 display-4">
                 Your Info
@@ -11,10 +11,10 @@
         </div>
 
         <div class="row">
-            <div class="col-md-6">
-                <img class="rounded-circle" asp-gravatar-emailaddress="@Model.EmailAddress" asp-gravatar-size="200" />
+            <div class="col-4 col-sm-3">
+                <img class="img-fluid rounded-circle mb-3" asp-gravatar-emailaddress="@Model.EmailAddress" asp-gravatar-size="500" />
             </div>
-            <div class="col-md-6">
+            <div class="col-sm-9">
                 <h3>
                     @Model.FirstName @Model.LastName
                 </h3>
@@ -25,24 +25,26 @@
 
                 <hr />
 
-                <div>
-                    <a asp-route="ChangeEmailAddress">Change email address</a>
-                </div>
+                <ul class="list-unstyled">
+                    <li>
+                        <a asp-route="ChangeEmailAddress">Change email address</a>
+                    </li>
 
-                <div>
-                    @if (Model.HasPassword)
-                    {
-                        <a asp-route="ChangePassword">Change password</a>
-                    }
-                    else
-                    {
-                        <a asp-route="AddPassword">Add password</a>
-                    }
-                </div>
+                    <li>
+                        @if (Model.HasPassword)
+                        {
+                            <a asp-route="ChangePassword">Change password</a>
+                        }
+                        else
+                        {
+                            <a asp-route="AddPassword">Add password</a>
+                        }
+                    </li>
 
-                <div>
-                    <a asp-route="ManageExternalLogins">Manage external logins (@Model.LoginsCount)</a>
-                </div>
+                    <li>
+                        <a asp-route="ManageExternalLogins">Manage external logins (@Model.LoginsCount)</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

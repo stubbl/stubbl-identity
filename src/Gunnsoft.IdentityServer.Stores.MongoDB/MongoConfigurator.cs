@@ -1,4 +1,4 @@
-﻿using IdentityServer4.Models;
+﻿using Gunnsoft.IdentityServer.Stores.MongoDB.Collections.PersistedGrants;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
@@ -24,6 +24,7 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
                 BsonClassMap.RegisterClassMap<PersistedGrant>(cm =>
                 {
                     cm.AutoMap();
+                    cm.MapIdMember(c => c.Id);
                     cm.SetIgnoreExtraElements(true);
                 });
             }

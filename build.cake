@@ -1,8 +1,7 @@
 var target = Argument("target", "Default");
-
 var configuration = Argument("configuration", EnvironmentVariable("CONFIGURATION") ?? "Release");
-
 var artifactsDirectory = @".\artifacts";
+var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "0.0.0";
 
 Task("Clean")
     .Does(() =>
@@ -63,8 +62,6 @@ Task("Publish")
     .IsDependentOn("Test")
     .Does(() => 
     {
-        var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "0.0.0";
-
         StartAndReturnProcess("dotnet", new ProcessSettings
             {
                 Arguments = $@"publish src\Stubbl.Identity --configuration {configuration} --no-restore /p:Version={version}"
@@ -78,16 +75,17 @@ Task("Pack")
     {
         CreateDirectory(artifactsDirectory);
 
-        var artifactFilePath = $@"{artifactsDirectory}\stubbl-identity.zip";
+        Zip($@".\src\Stubbl.Identity\bin\{configuration}\netcoreapp2.0\publish\", $@"{artifactsDirectory}\stubbl-identity.zip"); 
         
-        Zip($@".\src\Stubbl.Identity\bin\{configuration}\netcoreapp2.0\publish\", artifactFilePath); 
-        
-        if (AppVeyor.IsRunningOnAppVeyor)
-        {
-            AppVeyor.UploadArtifact(artifactFilePath, new AppVeyorUploadArtifactsSettings
+        foreach (var filePath in GetFiles($@"{artifactsDirectory}\*.*")) 
+        { 
+            if (AppVeyor.IsRunningOnAppVeyor)
             {
-                DeploymentName = "stubbl-identity"
-            });
+                AppVeyor.UploadArtifact(filePath, new AppVeyorUploadArtifactsSettings
+                {
+                    DeploymentName = filePath.GetFilenameWithoutExtension().ToString()
+                });
+            }
         }
     });
 

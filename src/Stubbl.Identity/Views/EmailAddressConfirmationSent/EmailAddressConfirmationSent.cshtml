@@ -14,13 +14,19 @@
             Please confirm your email address by clicking the link in the verification email sent to <strong>@Model.EmailAddress</strong>.
         </div>
 
-        @if (Model.AllowResendConfirmation)
+        @if (Model.AllowResend)
         {
             <form asp-route="ResendEmailAddressConfirmation" asp-route-userId="@Model.UserId" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                 <div class="form-group">
                     <button type="submit" class="btn btn-link p-0">Not received the email?</button>
                 </div>
             </form>
+        }
+        else
+        {
+            <p>
+                We've just sent you another email confirmation.
+            </p>
         }
     </div>
 </div>

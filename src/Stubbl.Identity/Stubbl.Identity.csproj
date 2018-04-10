@@ -9,8 +9,12 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="7.5.2" />
+    <PackageReference Include="Gunnsoft.AspNetCore.Identity.MongoDB" Version="0.1.2" />
+    <PackageReference Include="Gunnsoft.AspNetCore.Razor" Version="0.1.5" />
+    <PackageReference Include="Gunnsoft.Common" Version="0.1.8" />
+    <PackageReference Include="Gunnsoft.IdentityServer.Stores.MongoDB" Version="0.1.5" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.MongoDB" Version="1.0.2" />
@@ -21,8 +25,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
-    <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="1.1.0" />
-    <PackageReference Include="NWebsec.AspNetCore.Mvc.TagHelpers" Version="1.1.0" />
+    <PackageReference Include="NWebsec.AspNetCore.Middleware" Version="2.0.0" />
+    <PackageReference Include="NWebsec.AspNetCore.Mvc.TagHelpers" Version="2.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Exceptions" Version="4.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
@@ -36,12 +40,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Gunnsoft.AspNetCore.Identity.MongoDB\Gunnsoft.AspNetCore.Identity.MongoDB.csproj" />
-    <ProjectReference Include="..\Gunnsoft.Common\Gunnsoft.Common.csproj" />
-    <ProjectReference Include="..\Gunnsoft.IdentityServer.Stores.MongoDB\Gunnsoft.IdentityServer.Stores.MongoDB.csproj" />
   </ItemGroup>
 
 </Project>

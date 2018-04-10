@@ -1,3 +1,11 @@
-﻿body { padding-bottom: 56px; }
+﻿body {
+    padding-bottom: 56px;
+}
 
-.page-header small { font-weight: inherit; }
+.fa-microsoft:before {
+    content: "\f17a";
+}
+
+.page-header small {
+    font-weight: inherit;
+}

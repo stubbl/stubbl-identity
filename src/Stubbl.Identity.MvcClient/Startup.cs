@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,23 +23,28 @@ namespace Stubbl.Identity.MvcClient
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication(o =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    o.DefaultScheme = "Cookies";
+                    o.DefaultChallengeScheme = "oidc";
                 })
                 .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
+                .AddOpenIdConnect("oidc", o =>
                 {
-                    options.Authority = "http://localhost:51794";
-                    options.ClientId = "stubbl-identity-mvc-client";
-                    options.ClientSecret = "secret";
-                    options.GetClaimsFromUserInfoEndpoint = true;
-                    options.ResponseType = "code id_token";
-                    options.RequireHttpsMetadata = false;
-                    options.SaveTokens = true;
-                    options.Scope.Add("email profile offline_access openid");
-                    options.SignInScheme = "Cookies";
+                    o.Authority = "http://localhost:51794";
+                    o.ClaimActions.Add(new JsonKeyClaimAction("email_verified", "email_verified", "email_verified"));
+                    o.ClaimActions.Add(new JsonKeyClaimAction("preferred_username", "preferred_username", "preferred_username"));
+                    o.ClientId = "stubbl-identity-mvc-client";
+                    o.ClientSecret = "secret";
+                    o.GetClaimsFromUserInfoEndpoint = true;
+                    o.ResponseType = "code id_token";
+                    o.RequireHttpsMetadata = false;
+                    o.SaveTokens = true;
+                    o.Scope.Add("email");
+                    o.Scope.Add("profile");
+                    o.Scope.Add("offline_access");
+                    o.Scope.Add("openid");
+                    o.SignInScheme = "Cookies";
                 });
         }
     }

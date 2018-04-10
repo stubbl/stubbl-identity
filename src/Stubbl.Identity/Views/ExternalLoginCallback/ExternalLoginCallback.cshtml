@@ -6,7 +6,7 @@
     <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
         <div class="page-header">
             <h2 class="mb-4">
-                You've logged in with <u>@Model.LoginProvider</u> @Html.LoginProviderIcon(Model.LoginProvider)
+                You've logged in with @Model.LoginProvider <i class="fa fa-@Model.LoginProvider.ToLower()"></i>
             </h2>
         </div>
 

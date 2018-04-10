@@ -7,18 +7,15 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Gunnsoft.AspNetCore.Identity.MongoDB;
 using Gunnsoft.IdentityServer.Stores.MongoDB;
-using IdentityServer4.Models;
-using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json.Linq;
-using NWebsec.AspNetCore.Middleware;
+using NWebsec.Core.Common.Middleware.Options;
 using Stubbl.Identity.Options;
 
 namespace Stubbl.Identity
@@ -194,17 +191,23 @@ namespace Stubbl.Identity
                 .AddMongoIdentity<StubblUser, StubblRole>(mongoUrl)
                 .AddDefaultTokenProviders();
 
-            services.AddIdentityServer(o =>
+            var identityBuilder = services.AddIdentityServer(o =>
                 {
                     o.UserInteraction.ErrorUrl = "/error";
                     o.UserInteraction.LoginUrl = "/login";
                     o.UserInteraction.LogoutUrl = "/logout";
                 })
                 .AddAspNetIdentity<StubblUser, StubblClaimsPrincipalFactory>()
-                .AddDeveloperSigningCredential()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
-                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources());
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                .AddMongoClientStore(mongoUrl)
+                .AddMongoPersistedGrantStore(mongoUrl);
+
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                identityBuilder.AddDeveloperSigningCredential();
+            }
 
             services.AddMvc();
 
@@ -212,8 +215,6 @@ namespace Stubbl.Identity
                 .Configure<DiagnosticsOptions>(o => _configuration.GetSection("Diagnostics").Bind(o));
 
             var containerBuilder = new ContainerBuilder();
-
-            containerBuilder.AddMongoPersistedGrantStore(mongoUrl);
 
             containerBuilder.RegisterInstance(_configuration)
                 .As<IConfiguration>()

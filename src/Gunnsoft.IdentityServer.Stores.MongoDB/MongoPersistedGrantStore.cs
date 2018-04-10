@@ -9,9 +9,9 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
 {
     public class MongoPersistedGrantStore : IPersistedGrantStore
     {
-        private readonly IMongoCollection<PersistedGrant> _persistedGrantsCollection;
+        private readonly IMongoCollection<Collections.PersistedGrants.PersistedGrant> _persistedGrantsCollection;
 
-        public MongoPersistedGrantStore(IMongoCollection<PersistedGrant> persistedGrantsCollection)
+        public MongoPersistedGrantStore(IMongoCollection<Collections.PersistedGrants.PersistedGrant> persistedGrantsCollection)
         {
             _persistedGrantsCollection = persistedGrantsCollection;
         }
@@ -24,6 +24,16 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
             }
 
             return await _persistedGrantsCollection.Find(pg => pg.SubjectId == subjectId)
+                .Project(pg => new PersistedGrant
+                {
+                    ClientId = pg.ClientId,
+                    CreationTime = pg.Id.CreationTime,
+                    Data = pg.Data,
+                    Expiration = pg.Expiration,
+                    Key = pg.Key,
+                    SubjectId = pg.SubjectId,
+                    Type = pg.Type
+                })
                 .ToListAsync();
         }
 
@@ -35,7 +45,17 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
             }
 
             return await _persistedGrantsCollection.Find(pg => pg.Key == key)
-                .SortByDescending(pg => pg.CreationTime)
+                .SortByDescending(pg => pg)
+                .Project(pg => new PersistedGrant
+                {
+                    ClientId = pg.ClientId,
+                    CreationTime = pg.Id.CreationTime,
+                    Data = pg.Data,
+                    Expiration = pg.Expiration,
+                    Key = pg.Key,
+                    SubjectId = pg.SubjectId,
+                    Type = pg.Type
+                })
                 .FirstOrDefaultAsync();
         }
 
@@ -93,7 +113,17 @@ namespace Gunnsoft.IdentityServer.Stores.MongoDB
                 throw new ArgumentNullException(nameof(grant));
             }
 
-            await _persistedGrantsCollection.InsertOneAsync(grant);
+            var document = new Collections.PersistedGrants.PersistedGrant
+            {
+                ClientId = grant.ClientId,
+                Data = grant.Data,
+                Expiration = grant.Expiration,
+                Key = grant.Key,
+                SubjectId = grant.SubjectId,
+                Type = grant.Type
+            };
+
+            await _persistedGrantsCollection.InsertOneAsync(document);
         }
     }
 }

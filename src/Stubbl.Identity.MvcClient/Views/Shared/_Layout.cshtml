@@ -21,6 +21,7 @@
         </ul>
         @if (User.Identity.IsAuthenticated)
         {
+            <img src="" />
             <form asp-route="Logout" method="post" class="form-inline">
                 <button type="submit" class="btn btn-outline-danger">Log out</button>
             </form>

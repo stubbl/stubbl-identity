@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -62,7 +63,9 @@ namespace Stubbl.Identity.Controllers
                 return View(viewModel);
             }
 
-            if (await _userManager.FindByEmailAsync(inputModel.EmailAddress) != null)
+            var emailAddress = Regex.Replace(inputModel.EmailAddress, @"\+[^@]+", "");
+
+            if (await _userManager.FindByEmailAsync(emailAddress) != null)
             {
                 ModelState.AddModelError(nameof(inputModel.EmailAddress), "This email address has already been registered");
 
@@ -75,7 +78,7 @@ namespace Stubbl.Identity.Controllers
             {
                 FirstName = inputModel.FirstName,
                 LastName = inputModel.LastName,
-                EmailAddress = inputModel.EmailAddress,
+                EmailAddress = emailAddress,
                 Username = inputModel.EmailAddress
             };
 

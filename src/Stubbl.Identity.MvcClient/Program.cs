@@ -26,21 +26,29 @@ namespace Stubbl.Identity.MvcClient
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseKestrel()
                 .UseIISIntegration()
-                .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.MinimumLevel
-                    .Is(hostingContext.Configuration.GetValue<LogEventLevel>("Serilog:LogEventLevel"))
-                    .Enrich.FromLogContext()
-                    .Enrich.With(new PropertyEnricher("Component", "stubbl-identity-mvcclient"))
-                    .Enrich.With(new PropertyEnricher("Environment", hostingContext.HostingEnvironment.EnvironmentName))
-                    .Enrich.WithExceptionDetails()
-                    .WriteTo.Console(hostingContext.Configuration.GetValue<LogEventLevel>("Serilog:LogEventLevel"))
-                    .WriteTo.Seq
-                    (
-                        hostingContext.Configuration.GetValue<string>("Seq:Url"),
-                        apiKey: hostingContext.Configuration.GetValue<string>("Seq:ApiKey"),
-                        restrictedToMinimumLevel: hostingContext.Configuration.GetValue<LogEventLevel>(
-                            "Serilog:LogEventLevel")
-                    )
-                )
+                .UseSerilog((hostingContext, loggerConfiguration) =>
+                {
+                    loggerConfiguration.MinimumLevel
+                        .Is(hostingContext.Configuration.GetValue<LogEventLevel>("Serilog:LogEventLevel"))
+                        .Enrich.FromLogContext()
+                        .Enrich.With(new PropertyEnricher("Component", "stubbl-identity-mvcclient"))
+                        .Enrich.With(new PropertyEnricher("Environment", hostingContext.HostingEnvironment.EnvironmentName))
+                        .Enrich.WithExceptionDetails()
+                        .WriteTo.Console(hostingContext.Configuration.GetValue<LogEventLevel>("Serilog:LogEventLevel"));
+
+                    var seqUrl = hostingContext.Configuration.GetValue<string>("Seq:Url");
+
+                    if (!string.IsNullOrWhiteSpace(seqUrl))
+                    {
+                        loggerConfiguration.WriteTo.Seq
+                        (
+                            seqUrl,
+                            apiKey: hostingContext.Configuration.GetValue<string>("Seq:ApiKey"),
+                            restrictedToMinimumLevel: hostingContext.Configuration.GetValue<LogEventLevel>(
+                                "Serilog:LogEventLevel")
+                        );
+                    }
+                })
                 .UseStartup<Startup>()
                 .Build();
         }
