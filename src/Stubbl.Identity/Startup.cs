@@ -201,7 +201,6 @@ namespace Stubbl.Identity
                 .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
                 .AddInMemoryClients(IdentityServerConfig.GetClients(_configuration))
                 .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
-                .AddMongoClientStore(mongoUrl)
                 .AddMongoPersistedGrantStore(mongoUrl);
 
             if (_hostingEnvironment.IsDevelopment())

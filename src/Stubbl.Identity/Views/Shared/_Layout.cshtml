@@ -1,5 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Identity
 @using Stubbl.Identity
+@inject IHostingEnvironment HostingEnvironment
 @inject SignInManager<StubblUser> SignInManager
 
 @{
@@ -9,97 +11,103 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@(string.Join(" - ", new[] {ViewData["PageTitle"] as string, "Stubbl"}.Where(x => !string.IsNullOrWhiteSpace(x))))</title>
+    <title>@(string.Join(" - ", new[] { ViewData["PageTitle"] as string, "Stubbl" }.Where(x => !string.IsNullOrWhiteSpace(x))))</title>
 
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
-        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css"/>
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
 
-        <link rel="stylesheet" href="~/css/bootstrap-social.css"/>
-        <link rel="stylesheet" href="~/css/form-signin.css"/>
-        <link rel="stylesheet" href="~/css/site.css"/>
-        <link rel="stylesheet" href="~/css/validation.css"/>
+        <link rel="stylesheet" href="~/css/bootstrap-social.css" />
+        <link rel="stylesheet" href="~/css/form-signin.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/validation.css" />
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css"
               crossorigin="anonymous"
               integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20="
               asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
               crossorigin="anonymous"
               integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
               asp-fallback-href="~/lib/font-awesome/css/font-awesome.min.css"
-              asp-fallback-test-class="fa" asp-fallback-test-property="font-family" asp-fallback-test-value="FontAwesome"/>
+              asp-fallback-test-class="fa" asp-fallback-test-property="font-family" asp-fallback-test-value="FontAwesome" />
 
-        <link rel="stylesheet" href="~/css/bundle.min.css" asp-append-version="true"/>
+        <link rel="stylesheet" href="~/css/bundle.min.css" asp-append-version="true" />
     </environment>
 
     @RenderSection("Styles", false)
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
-    <a asp-route="Home" class="navbar-brand">Stubbl</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+        <a asp-route="Home" class="navbar-brand">Stubbl</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbar">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a asp-route="Home" class="nav-link">
-                    Your Info
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                @if (HostingEnvironment.IsDevelopment())
+                {
+                    <li class="nav-item">
+                        <a href="http://localhost:57255/" class="nav-link">
+                            Stubbl Identity MVC Client
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            @if (SignInManager.IsSignedIn(User) && !isLoggedOut)
+            {
+                <a asp-route="Home" class="mr-3">
+                    <img class="img-fluid rounded-circle" asp-gravatar-emailaddress="@User.Claims.FirstOrDefault(c => c.Type == "email")?.Value" asp-gravatar-size="40" />
                 </a>
-            </li>
-        </ul>
+                <form asp-route="Logout" class="form-inline my-2 my-lg-0" method="post">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Log out</button>
+                </form>
+            }
+        </div>
+    </nav>
 
-        @if (SignInManager.IsSignedIn(User) && !isLoggedOut)
-        {
-            <form asp-route="Logout" class="form-inline my-2 my-lg-0" method="post">
-                <button class="btn btn-outline-danger my-2 my-sm-0" type="submit">Log out</button>
-            </form>
-        }
+    <div class="container mt-4">
+        @RenderBody()
     </div>
-</nav>
 
-<div class="container mt-4">
-    @RenderBody()
-</div>
+    <environment include="Development">
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/URI.js/URI.js"></script>
 
-<environment include="Development">
-    <script src="~/lib/jquery/jquery.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
-    <script src="~/lib/URI.js/URI.js"></script>
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
+                asp-fallback-src="~/lib/jquery/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha256-5+02zu5UULQkO7w1GIr6vftCgMfFdZcAHeDtFnKZsBs=">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.0/URI.min.js"
+                asp-fallback-src="~/lib/URI.js/URI.min.js"
+                asp-fallback-test="window.URI"
+                crossorigin="anonymous"
+                integrity="sha256-r1xY9ZVKxg3yQJup3KeUJLtYqrqUt9aeF7KHaprys34=">
+        </script>
 
-    <script src="~/js/site.js"></script>
-</environment>
-<environment exclude="Development">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"
-            asp-fallback-src="~/lib/jquery/jquery.min.js"
-            asp-fallback-test="window.jQuery"
-            crossorigin="anonymous"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"
-            asp-fallback-src="~/lib/bootstrap/js/bootstrap.min.js"
-            asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-            crossorigin="anonymous"
-            integrity="sha256-5+02zu5UULQkO7w1GIr6vftCgMfFdZcAHeDtFnKZsBs=">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.0/URI.min.js"
-            asp-fallback-src="~/lib/URI.js/URI.min.js"
-            asp-fallback-test="window.URI"
-            crossorigin="anonymous"
-            integrity="sha256-r1xY9ZVKxg3yQJup3KeUJLtYqrqUt9aeF7KHaprys34=">
-    </script>
+        <script src="~/js/bundle.min.js" asp-append-version="true"></script>
+    </environment>
 
-    <script src="~/js/bundle.min.js" asp-append-version="true"></script>
-</environment>
-
-@RenderSection("Scripts", false)
+    @RenderSection("Scripts", false)
 </body>
 </html>
