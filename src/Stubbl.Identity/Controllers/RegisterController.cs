@@ -1,10 +1,12 @@
 ﻿using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.Register;
+using Stubbl.Identity.Notifications.Email;
 using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
@@ -52,7 +54,8 @@ namespace Stubbl.Identity.Controllers
         [HttpPost("/register", Name = "Register")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([FromForm] RegisterInputModel inputModel, [FromQuery] string returnUrl)
+        public async Task<IActionResult> Register([FromForm] RegisterInputModel inputModel,
+            [FromQuery] string returnUrl, CancellationToken cancellationToken)
         {
             RegisterViewModel viewModel;
 
@@ -92,12 +95,13 @@ namespace Stubbl.Identity.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new {userId = user.Id, token, returnUrl},
                 Request.Scheme);
+            var email = new ConfirmEmailAddressEmail
+            (
+                user.NewEmailAddress,
+                callbackUrl
+            );
 
-            const string subject = "Stubbl: Please confirm your email address";
-            var message =
-                $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
-
-            await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
+            await _emailSender.SendEmailAsync(email, cancellationToken);
 
             if (_signInManager.Options.SignIn.RequireConfirmedEmail)
             {

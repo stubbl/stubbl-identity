@@ -7,7 +7,7 @@ namespace Stubbl.Identity.Services
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<LoggingEmailSender>()
+            builder.RegisterType<EmailSender.EmailSender>()
                 .As<IEmailSender>()
                 .SingleInstance();
         }

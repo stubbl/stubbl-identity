@@ -16,6 +16,7 @@
     <PackageReference Include="Gunnsoft.Common" Version="0.1.8" />
     <PackageReference Include="Gunnsoft.IdentityServer.Stores.MongoDB" Version="0.1.6" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
+    <PackageReference Include="MailKit" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.MongoDB" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.0.1" />

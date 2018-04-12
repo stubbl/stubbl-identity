@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.ExternalLoginCallback;
+using Stubbl.Identity.Notifications.Email;
 using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
@@ -39,12 +41,13 @@ namespace Stubbl.Identity.Controllers
             {
                 FirstName = inputModel.FirstName,
                 LastName = inputModel.LastName,
-                EmailAddress = inputModel.EmailAddress,
+                EmailAddress = inputModel.EmailAddress
             };
         }
 
         [HttpGet("/external-login-callback", Name = "ExternalLoginCallback")]
-        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl, [FromQuery] string remoteError)
+        public async Task<IActionResult> ExternalLoginCallback([FromQuery] string returnUrl,
+            [FromQuery] string remoteError, CancellationToken cancellationToken)
         {
             if (remoteError != null)
             {
@@ -107,7 +110,7 @@ namespace Stubbl.Identity.Controllers
 
                 TryValidateModel(model);
 
-                return await ExternalLoginCallback(model, returnUrl, true);
+                return await ExternalLoginCallback(model, returnUrl, true, cancellationToken);
             }
 
             if (_interactionService.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
@@ -121,7 +124,7 @@ namespace Stubbl.Identity.Controllers
         [HttpPost("/external-login-callback", Name = "ExternalLoginCallback")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExternalLoginCallback([FromForm] ExternalLoginCallbackInputModel inputModel,
-            [FromQuery] string returnUrl, [FromQuery] bool isEmailAddressConfirmed)
+            [FromQuery] string returnUrl, [FromQuery] bool isEmailAddressConfirmed, CancellationToken cancellationToken)
         {
             var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
 
@@ -178,12 +181,13 @@ namespace Stubbl.Identity.Controllers
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token, returnUrl },
                     Request.Scheme);
+                var email = new ConfirmEmailAddressEmail
+                (
+                    user.NewEmailAddress,
+                    callbackUrl
+                );
 
-                const string subject = "Stubbl: Please confirm your email address";
-                var message =
-                    $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
-
-                await _emailSender.SendEmailAsync(user.EmailAddress, subject, message);
+                await _emailSender.SendEmailAsync(email, cancellationToken);
 
                 if (_signInManager.Options.SignIn.RequireConfirmedEmail)
                 {

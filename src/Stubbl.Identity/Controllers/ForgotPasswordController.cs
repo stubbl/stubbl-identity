@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.ForgotPassword;
+using Stubbl.Identity.Notifications.Email;
 using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
@@ -40,7 +42,8 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/forgot-password", Name = "ForgotPassword")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordInputModel inputModel, [FromQuery] string returnUrl)
+        public async Task<IActionResult> ForgotPassword([FromForm] ForgotPasswordInputModel inputModel,
+            [FromQuery] string returnUrl, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -58,12 +61,13 @@ namespace Stubbl.Identity.Controllers
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
             var callbackUrl = Url.RouteUrl("ResetPassword", new {code, returnUrl}, Request.Scheme);
+            var email = new ResetPasswordEmail
+            (
+                user.NewEmailAddress,
+                callbackUrl
+            );
 
-            const string subject = "Reset Password";
-            var message =
-                $"Reset your password by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>";
-
-            await _emailSender.SendEmailAsync(inputModel.EmailAddress, subject, message);
+            await _emailSender.SendEmailAsync(email, cancellationToken);
 
             return RedirectToRoute("ForgotPasswordConfirmation", new {returnUrl});
         }

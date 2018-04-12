@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stubbl.Identity.Models.ChangeEmailAddress;
+using Stubbl.Identity.Notifications.Email;
 using Stubbl.Identity.Services.EmailSender;
 
 namespace Stubbl.Identity.Controllers
@@ -44,7 +46,7 @@ namespace Stubbl.Identity.Controllers
 
         [HttpPost("/change-email-address", Name = "ChangeEmailAddress")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangeEmailAddress([FromForm] ChangeEmailAddressInputModel inputModel)
+        public async Task<IActionResult> ChangeEmailAddress([FromForm] ChangeEmailAddressInputModel inputModel, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -89,12 +91,13 @@ namespace Stubbl.Identity.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var callbackUrl = Url.RouteUrl("ConfirmEmailAddress", new { userId = user.Id, token },
                 Request.Scheme);
+            var email = new ConfirmEmailAddressEmail
+            (
+                user.NewEmailAddress,
+                callbackUrl
+            );
 
-            const string subject = "Stubbl: Please confirm your email address";
-            var message =
-                $"Please confirm your email address by clicking the following link: <a href=\"{callbackUrl}\">{callbackUrl}</a>.";
-
-            await _emailSender.SendEmailAsync(user.NewEmailAddress, subject, message);
+            await _emailSender.SendEmailAsync(email, cancellationToken);
 
             if (_signInManager.Options.SignIn.RequireConfirmedEmail)
             {
