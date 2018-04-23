@@ -1,5 +1,5 @@
 var target = Argument("target", "Default");
-var Stubblation = Argument("Stubblation", EnvironmentVariable("StubblATION") ?? "Release");
+var configuration = Argument("configuration", EnvironmentVariable("configuration") ?? "Release");
 var artifactsDirectory = @".\artifacts";
 var version = EnvironmentVariable("APPVEYOR_BUILD_VERSION") ?? "0.0.0";
 const string errorMessage = "Process returned an error (exit code {0}).";
@@ -41,7 +41,7 @@ Task("Build")
     {
         var exitCode = StartProcess("dotnet", new ProcessSettings
         {
-            Arguments = $"build --Stubblation {Stubblation} --no-restore"
+            Arguments = $"build --configuration {configuration} --no-restore"
         });
 
         if (exitCode != 0)
@@ -62,14 +62,14 @@ Task("Test")
             {
                 exitCode += StartProcess("dotnet", new ProcessSettings
                 {
-                    Arguments = $"test {filePath} --Stubblation {Stubblation} --logger:AppVeyor --no-build --no-restore"
+                    Arguments = $"test {filePath} --configuration {configuration} --logger:AppVeyor --no-build --no-restore"
                 });
             }
             else
             {
                 exitCode += StartProcess("dotnet", new ProcessSettings
                 {
-                    Arguments = $"test {filePath} --Stubblation {Stubblation} --no-build --no-restore"
+                    Arguments = $"test {filePath} --configuration {configuration} --no-build --no-restore"
                 });
             }
         }
@@ -80,13 +80,13 @@ Task("Test")
         }
     });
 
-Task("Pack")
+Task("Publish")
     .IsDependentOn("Test")
     .Does(() => 
     {
         var exitCode = StartProcess("dotnet", new ProcessSettings
         {
-            Arguments = $@"publish src\Stubbl.Identity --Stubblation {Stubblation} --no-restore /p:Version={version}"
+            Arguments = $@"publish src\Stubbl.Identity --configuration {configuration} --no-restore /p:Version={version}"
         });
 
         if (exitCode != 0)
@@ -96,12 +96,12 @@ Task("Pack")
     });
 
 Task("Copy")
-    .IsDependentOn("Pack")
+    .IsDependentOn("Publish")
     .Does(() =>
     {
         CreateDirectory(artifactsDirectory);
 
-        Zip($@".\src\Stubbl.Identity\bin\{Stubblation}\netcoreapp2.0\publish\", $@"{artifactsDirectory}\stubbl-identity.zip"); 
+        Zip($@".\src\Stubbl.Identity\bin\{configuration}\netcoreapp2.0\publish\", $@"{artifactsDirectory}\stubbl-identity.zip"); 
         
         foreach (var filePath in GetFiles($@"{artifactsDirectory}\*.*")) 
         { 
