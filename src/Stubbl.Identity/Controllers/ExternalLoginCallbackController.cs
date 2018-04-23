@@ -183,7 +183,7 @@ namespace Stubbl.Identity.Controllers
                     Request.Scheme);
                 var email = new ConfirmEmailAddressEmail
                 (
-                    user.NewEmailAddress,
+                    user.EmailAddress,
                     callbackUrl
                 );
 

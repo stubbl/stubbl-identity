@@ -24,9 +24,12 @@ for:
     only:
       - master
 
-  version: 0.1.22
+  version: 0.1.23
 
   deploy:
+    - provider: Environment
+      name: configur-github-identity
+
     - provider: Environment
       name: stubbl-production-uksouth-identity__staging
 
@@ -35,4 +38,4 @@ for:
     except:
     - master
 
-  version: 0.1.22.{build}-{branch}
+  version: 0.1.23.{build}-{branch}

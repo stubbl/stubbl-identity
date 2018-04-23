@@ -30,8 +30,7 @@ namespace Stubbl.Identity
                     configuration.SetBasePath(hostingEnvironment.ContentRootPath)
                         .AddJsonFile("appsettings.json", true, true)
                         .AddJsonFile($"appsettings.{hostingEnvironment.EnvironmentName}.json", true, true)
-                        .AddEnvironmentVariables()
-                        .AddUserSecrets<Startup>();
+                        .AddEnvironmentVariables();
                 })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseKestrel()
