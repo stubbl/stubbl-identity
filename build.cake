@@ -116,6 +116,6 @@ Task("Copy")
     });
 
 Task("Default")
-    .IsDependentOn("Pack");
+    .IsDependentOn("Copy");
 
 RunTarget(target);
