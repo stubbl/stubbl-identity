@@ -77,7 +77,7 @@ namespace Stubbl.Identity
                     "https://accounts.google.com",
                     "https://github.com",
                     "https://login.microsoftonline.com",
-                    "http://localhost:57255"
+                    "http://localhost:38578"
                 );
             });
 
